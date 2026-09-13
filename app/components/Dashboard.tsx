@@ -29,6 +29,7 @@ import { applyPricePreference } from "@/app/lib/pricePreferences";
 import StatsCard from "./StatsCard";
 import FoodCard from "./FoodCard";
 import WeatherPricing from "./WeatherPricing";
+import BusinessInventory from "./BusinessInventory";
 import FreshnessSlider, { FilterMode, SortOrder } from "./FreshnessSlider";
 
 export default function Dashboard({ business = false }: { business?: boolean }) {
@@ -46,7 +47,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
   const [searchQuery, setSearchQuery] = useState("");
   const [freshnessValue, setFreshnessValue] = useState<number>(100);
   const [filterMode, setFilterMode] = useState<FilterMode>("below");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("freshest");
+  const [sortOrder, setSortOrder] = useState<SortOrder>(business ? "least-fresh" : "freshest");
 
   const [personalPriceRange, setPersonalPriceRange] = useState<PriceRange | null>(null);
   const priceCeiling = Math.max(1, Math.ceil(Math.max(...items.map(item => item.discountedPrice), 0)));
@@ -54,7 +55,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
 
   // Fetch OpenFoodFacts + Supabase user created products on mount
   useEffect(() => {
-    resolveCurrentSession().then(setUserSession);
+    resolveCurrentSession().then(setUserSession).catch(() => setUserSession(null));
 
     async function loadData() {
       try {
@@ -87,7 +88,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
 
   // ── Filtered & Sorted items ──────────────────────────
   const filteredItems = useMemo(() => {
-    let result = items;
+    let result = business ? items : items.filter(item => item.daysUntilExpiry >= 0);
 
     if (selectedCategory !== "All") {
       result = result.filter((i) => i.category === selectedCategory);
@@ -124,19 +125,17 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
 
   // ── Stats Summary ────────────────────────────────────
   const stats = useMemo(() => {
-    const totalItems = items.length;
+    const availableItems = business ? items : items.filter(item => item.daysUntilExpiry >= 0);
+    const totalItems = availableItems.length;
     const avgDiscount =
-      items.reduce((sum, i) => sum + i.discountPercentage, 0) / (totalItems || 1);
-    const expiringSoon = items.filter(
+      availableItems.reduce((sum, i) => sum + i.discountPercentage, 0) / (totalItems || 1);
+    const expiringSoon = availableItems.filter(
       (i) => i.daysUntilExpiry <= 2 && i.daysUntilExpiry >= 0
     ).length;
-    const totalSavings = items.reduce(
-      (sum, i) => sum + (i.originalPrice - i.discountedPrice),
-      0
-    );
-
-    return { totalItems, avgDiscount, expiringSoon, totalSavings };
-  }, [items]);
+    const expired = items.filter(item => item.daysUntilExpiry < 0).length;
+    const bestDiscount = Math.max(0, ...availableItems.map(item => item.discountPercentage));
+    return { totalItems, avgDiscount, expiringSoon, expired, bestDiscount };
+  }, [items, business]);
 
   const todayStr = new Date().toLocaleDateString("en-AU", {
     weekday: "long",
@@ -146,7 +145,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
   });
 
   return (
-    <div className="foodmart min-h-screen">
+    <div className={`${business ? "business-dashboard" : "foodmart"} min-h-screen`}>
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* ── Header ─────────────────────────────────── */}
         <header className="fm-header">
@@ -181,7 +180,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
               <PlusCircle className="h-4 w-4" />
               <span>Add Product</span>
             </Link>}
-            <Link href={business ? "/" : "/business"} className="text-xs font-bold text-[#203B2A] underline">{business ? "Personal account" : "Business account"}</Link>
+            <Link href={business ? "/" : "/business"} className="text-xs font-bold text-[#203B2A] underline">{business ? "View customer storefront" : userSession?.accountType === "business" ? "Business dashboard" : "Business sign in"}</Link>
 
             {/* Auth Session Button */}
             {userSession ? (
@@ -214,20 +213,32 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             
           </div>
         </header>
-        <nav className="fm-nav" aria-label="Store navigation"><a href="#categories">Shop by category</a><a href="#products">All products</a><a href="#weather">Local weather</a><a href="#filters">Freshness &amp; savings</a></nav>
+        {business ? (
+          <>
+            <nav className="fm-nav" aria-label="Business navigation"><a href="#overview">Overview</a><a href="#products">Inventory</a><a href="#weather">Pricing conditions</a><Link href="/create-product">Add product</Link></nav>
+            <section id="overview" className="business-overview">
+              <div><p className="text-xs font-bold uppercase tracking-widest text-[#BCD980]">Business workspace</p><h2>Keep stock moving.<br />Reduce food waste.</h2><p>Review expiry dates, monitor markdowns, and manage product pricing from one place.</p><a href="#products" className="inline-block mt-5 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#203B2A]">Manage inventory &rarr;</a></div>
+              <div className="business-attention"><AlertTriangle className="h-6 w-6 text-[#BCD980]" /><h3>Needs your attention</h3><p><strong>{stats.expiringSoon}</strong> products expire within 2 days</p><p><strong>{stats.expired}</strong> expired products to review</p><span>Inventory is sorted by lowest freshness first.</span></div>
+            </section>
+          </>
+        ) : (
+          <>
+            <nav className="fm-nav" aria-label="Store navigation"><a href="#categories">Shop by category</a><a href="#products">All products</a><a href="#filters">My budget &amp; freshness</a></nav>
         <section className="fm-banners" aria-label="Explore our groceries">
           <div className="fm-main-banner"><div><p className="fm-eyebrow">Fresh choices, every day</p><h2>Good food.<br />Even better value.</h2><p>Discover fresh favourites and thoughtful prices that help good food go further.</p><a href="#products" className="fm-cta">Explore products &rarr;</a></div><img src="/foodmart/product-thumb-1.png" alt="Fruit juice bottle" /></div>
           <a href="#products" onClick={() => setSelectedCategory("Fruits")} className="fm-promo fm-produce"><span>Fresh from the produce aisle</span><h3>Fruits &amp;<br />Vegetables</h3><span>Explore fruits &rarr;</span></a>
           <a href="#products" onClick={() => setSelectedCategory("Bakery")} className="fm-promo fm-bakery"><span>A little everyday comfort</span><h3>Bakery<br />favourites</h3><span>Shop collection &rarr;</span></a>
         </section>
         <section id="categories" className="fm-categories"><div className="fm-section-title"><h2>Shop by category</h2><a href="#products" onClick={() => setSelectedCategory("All")}>View all products &rarr;</a></div><div className="fm-category-grid">{CATEGORIES.map((cat, i) => <a key={cat} href="#products" onClick={() => setSelectedCategory(cat)} className={selectedCategory === cat ? "fm-category selected" : "fm-category"}><img alt="" src={`/foodmart/${["icon-vegetables-broccoli.png","icon-bread-herb-flour.png","icon-soft-drinks-bottle.png","icon-animal-products-drumsticks.png","icon-bread-baguette.png","icon-wine-glass-bottle.png"][i]}`} /><span>{cat}</span></a>)}</div></section>
-        <section id="weather" className="fm-weather"><div className="fm-section-title"><h2>Local weather &amp; smart savings</h2></div><WeatherPricing weather={items[0]?.weather} editable /></section>
+          </>
+        )}
+        {business && <section id="weather" className="fm-weather"><div className="fm-section-title"><h2>Weather &amp; pricing conditions</h2></div><WeatherPricing weather={items[0]?.weather} editable /></section>}
         <div id="products" className="fm-section-title"><h2>{business ? "Your inventory" : "Fresh finds for you"}</h2><span>{isLoadingApi ? "Updating products..." : todayStr}</span></div>
         {/* ── Stats row ──────────────────────────────── */}
         <div className={`mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 ${business ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
           <StatsCard
             icon={Package}
-            label="Total Products"
+            label={business ? "Inventory listings" : "Products to explore"}
             value={stats.totalItems}
             accentBg="bg-[#203B2A]/10"
             iconColor="text-[#203B2A]"
@@ -235,7 +246,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           />
           <StatsCard
             icon={TrendingDown}
-            label="Avg. AI Discount"
+            label={business ? "Average markdown" : "Average available discount"}
             value={`${stats.avgDiscount.toFixed(1)}%`}
             accentBg="bg-[#2D7545]/15"
             iconColor="text-[#2D7545]"
@@ -243,16 +254,16 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           />
           <StatsCard
             icon={AlertTriangle}
-            label="Expiring Soon (≤2d)"
-            value={stats.expiringSoon}
+            label={business ? "Expiring within 2 days" : "Best available discount"}
+            value={business ? stats.expiringSoon : `${stats.bestDiscount}%`}
             accentBg="bg-amber-500/15"
             iconColor="text-amber-600"
             delay={100}
           />
           {business && <StatsCard
             icon={PiggyBank}
-            label="Total Waste Savings"
-            value={`$${stats.totalSavings.toFixed(2)}`}
+            label="Expired listings to review"
+            value={stats.expired}
             accentBg="bg-[#BCD980]/20"
             iconColor="text-[#203B2A]"
             delay={150}
@@ -270,7 +281,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             sortOrder={sortOrder}
             onChangeSortOrder={setSortOrder}
             matchingCount={filteredItems.length}
-            totalCount={items.length}
+            totalCount={stats.totalItems}
           />
         </div>
 
@@ -322,7 +333,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             <span className="font-extrabold text-[#203B2A]">
               {filteredItems.length}
             </span>{" "}
-            of <span className="font-bold text-slate-600">{items.length}</span> items
+            of <span className="font-bold text-slate-600">{stats.totalItems}</span> items
             {selectedCategory !== "All" && (
               <span>
                 {" "}
@@ -340,7 +351,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
 
         {/* ── Food Card Grid ─────────────────────────── */}
         {filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          business ? <BusinessInventory items={filteredItems} /> : <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.map((item, i) => (
               <FoodCard key={item.id} item={item} index={i} business={business} />
             ))}
