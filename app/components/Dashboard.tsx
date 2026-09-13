@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -10,10 +11,6 @@ import {
   TrendingDown,
   AlertTriangle,
   PiggyBank,
-  Sparkles,
-  RefreshCw,
-  Store,
-  CheckCircle2,
   Filter,
   PlusCircle,
   User,
@@ -149,10 +146,10 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5]">
+    <div className="foodmart min-h-screen">
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* ── Header ─────────────────────────────────── */}
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-slate-200/80 pb-6">
+        <header className="fm-header">
           <div>
             <div className="mb-2 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#203B2A] text-white">
@@ -175,6 +172,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             </p>
           </div>
 
+          <form className="fm-search" onSubmit={e => { e.preventDefault(); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }}><label className="sr-only" htmlFor="fm-search">Search products</label><input id="fm-search" placeholder="Search for products, brands and more" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /><button aria-label="Search products"><Search size={21} /></button></form>
           {/* Right Header Controls */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Create Product Button */}
@@ -219,15 +217,15 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             
           </div>
         </header>
-        <WeatherPricing weather={items[0]?.weather} editable />
-
-        {!business && (
-          <h2 className="mb-8 text-6xl font-black leading-[0.9] tracking-tight text-[#2D7545] sm:text-7xl lg:text-8xl">
-            <span className="block">Welcome to</span>
-            <span className="block">SmartPriceTag</span>
-          </h2>
-        )}
-
+        <nav className="fm-nav" aria-label="Store navigation"><a href="#categories">Shop by category</a><a href="#products">All products</a><a href="#weather">Local weather</a><a href="#filters">Freshness &amp; savings</a></nav>
+        <section className="fm-banners" aria-label="Explore our groceries">
+          <div className="fm-main-banner"><div><p className="fm-eyebrow">Fresh choices, every day</p><h2>Good food.<br />Even better value.</h2><p>Discover fresh favourites and thoughtful prices that help good food go further.</p><a href="#products" className="fm-cta">Explore products &rarr;</a></div><img src="/foodmart/product-thumb-1.png" alt="Fruit juice bottle" /></div>
+          <a href="#products" onClick={() => setSelectedCategory("Fruits")} className="fm-promo fm-produce"><span>Fresh from the produce aisle</span><h3>Fruits &amp;<br />Vegetables</h3><span>Explore fruits &rarr;</span></a>
+          <a href="#products" onClick={() => setSelectedCategory("Bakery")} className="fm-promo fm-bakery"><span>A little everyday comfort</span><h3>Bakery<br />favourites</h3><span>Shop collection &rarr;</span></a>
+        </section>
+        <section id="categories" className="fm-categories"><div className="fm-section-title"><h2>Shop by category</h2><a href="#products" onClick={() => setSelectedCategory("All")}>View all products &rarr;</a></div><div className="fm-category-grid">{CATEGORIES.map((cat, i) => <a key={cat} href="#products" onClick={() => setSelectedCategory(cat)} className={selectedCategory === cat ? "fm-category selected" : "fm-category"}><img alt="" src={`/foodmart/${["icon-vegetables-broccoli.png","icon-bread-herb-flour.png","icon-soft-drinks-bottle.png","icon-animal-products-drumsticks.png","icon-bread-baguette.png","icon-wine-glass-bottle.png"][i]}`} /><span>{cat}</span></a>)}</div></section>
+        <section id="weather" className="fm-weather"><div className="fm-section-title"><h2>Local weather &amp; smart savings</h2></div><WeatherPricing weather={items[0]?.weather} editable /></section>
+        <div id="products" className="fm-section-title"><h2>{business ? "Your inventory" : "Fresh finds for you"}</h2><span>{isLoadingApi ? "Updating products..." : todayStr}</span></div>
         {/* ── Stats row ──────────────────────────────── */}
         <div className={`mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 ${business ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
           <StatsCard
@@ -265,7 +263,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         </div>
 
         {/* ── Interactive Freshness Slider ───────────── */}
-        <div className="mb-6">
+        <div id="filters" className="mb-6">
           <FreshnessSlider
             personal={!business}
             freshnessValue={freshnessValue}
@@ -377,7 +375,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         {/* ── Footer ─────────────────────────────────── */}
         <footer className="mt-16 border-t border-slate-200/80 pt-6 text-center">
           <p className="text-xs font-semibold text-[#536B50]">
-            SmartPriceTag {business ? "Business Dashboard" : "Personal"} &bull;
+            SmartPriceTag {business ? "Business Dashboard" : "Personal"} &bull; Design adapted from FoodMart by TemplatesJungle
           </p>
         </footer>
       </div>

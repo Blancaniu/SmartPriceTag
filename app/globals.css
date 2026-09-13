@@ -259,3 +259,53 @@ input[type="range"] {
   outline-offset: 3px;
   border-radius: 999px;
 }
+
+/* FoodMart by TemplatesJungle: adapted storefront presentation. */
+.foodmart { background: #fff; color: #222; font-family: Arial, Helvetica, sans-serif; }
+.foodmart > div { max-width: 1500px; }
+.fm-header { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding-bottom: 28px; border-bottom: 1px solid #eee; }
+.fm-header h1 { color: #222; font-size: 28px; }
+.fm-header h1 span { color: #9c7100; }
+.fm-header > div:first-child > p { display: none; }
+.fm-header > div:first-child > div { margin: 0; }
+.fm-header > div:first-child .h-12 { background: #ffc43f; color: #222; }
+.fm-header > div:first-child svg { color: #222; }
+.fm-search { display: flex; align-items: center; flex: 1; max-width: 470px; background: #f7f7f7; padding: 14px 18px; border-radius: 8px; }
+.fm-search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 13px; }
+.fm-search button { padding: 4px; color: #555; }
+.fm-nav { display: flex; flex-wrap: wrap; gap: 32px; padding: 24px 0; font-size: 14px; color: #444; }
+.fm-nav a:first-child { font-weight: 700; }
+.fm-nav a:hover { text-decoration: underline; text-underline-offset: 6px; }
+.fm-banners { display: grid; grid-template-columns: 1.4fr 1fr; grid-template-rows: 1fr 1fr; gap: 24px; }
+.fm-main-banner { grid-row: span 2; display: flex; align-items: center; min-height: 510px; background: #e6f3fb; padding: 42px; border-radius: 12px; overflow: hidden; }
+.fm-main-banner > div { flex: 1; position: relative; z-index: 1; }
+.fm-main-banner img { width: 36%; max-height: 390px; object-fit: contain; }
+.fm-eyebrow { color: #906712; font-family: Georgia,serif; font-size: 24px; }
+.fm-main-banner h2 { font-size: clamp(34px,3.5vw,54px); line-height: 1.12; font-weight: 700; letter-spacing: -.035em; margin: 20px 0; }
+.fm-main-banner h2 + p { font-size: 15px; line-height: 1.8; color: #58636b; }
+.fm-cta { display: inline-block; border: 1px solid #333; border-radius: 4px; padding: 12px 20px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-top: 24px; }
+.fm-cta:hover { background: #ffc43f; }
+.fm-promo { padding: 30px; border-radius: 12px; background-repeat: no-repeat; background-position: right bottom; background-size: 45%; }
+.fm-produce { background-color: #eef5e5; background-image: url('/foodmart/ad-image-1.png'); }
+.fm-bakery { background-color: #f9ebe7; background-image: url('/foodmart/ad-image-2.png'); }
+.fm-promo > span:first-child { font-family: Georgia,serif; font-size: 17px; }
+.fm-promo h3 { font-size: 29px; font-weight: 700; line-height: 1.15; margin: 15px 0; }
+.fm-promo > span:last-child { font-size: 12px; }
+.fm-categories { padding: 48px 0; }
+.fm-section-title { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 24px; }
+.fm-section-title h2 { font-size: 27px; font-weight: 700; letter-spacing: -.025em; }
+.fm-section-title > a, .fm-section-title > span { font-size: 12px; color: #626262; }
+.fm-category-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 18px; }
+.fm-category { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 30px 12px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 5px 22px #00000006; font-size: 15px; font-weight: 600; }
+.fm-category img { width: 38px; height: 38px; object-fit: contain; }
+.fm-category:hover, .fm-category.selected { background: #fff9eb; border-color: #ffc43f; }
+.fm-weather { padding: 26px; background: #fafafa; border-radius: 12px; margin-bottom: 42px; }
+.foodmart .food-card, .foodmart .stats-card { border: 1px solid #ededed; border-radius: 12px; box-shadow: 0 5px 22px #00000006; }
+.foodmart .food-card h3 { font-family: Arial, sans-serif; font-size: 20px; color: #333; }
+.foodmart .food-card:hover { border-color: #e2ce9d; box-shadow: 0 12px 28px #0000000c; }
+.foodmart .food-card img { object-fit: contain; }
+.foodmart button[class*='bg-[#203B2A]'], .foodmart a[class*='bg-[#203B2A]'] { background: #ffc43f; border-color: #ffc43f; color: #222; box-shadow: none; border-radius: 6px; }
+.foodmart :is(a,button,input):focus-visible { outline: 2px solid #916611; outline-offset: 3px; }
+.foodmart #products, .foodmart #categories, .foodmart #weather, .foodmart #filters { scroll-margin-top: 24px; }
+@media(max-width:1100px) { .fm-header { flex-wrap: wrap; } .fm-search { order: 3; max-width: none; flex-basis: 100%; } .fm-main-banner { padding: 26px; } .fm-category-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media(max-width:700px) { .fm-banners { grid-template-columns: 1fr; grid-template-rows: auto; } .fm-main-banner { grid-row: auto; min-height: 360px; } .fm-promo { min-height: 215px; } .fm-nav { gap: 18px; font-size: 12px; } .fm-section-title { flex-wrap: wrap; } .fm-section-title h2 { font-size: 24px; } .fm-category-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; } .fm-weather { padding: 16px; } }
