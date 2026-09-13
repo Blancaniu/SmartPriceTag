@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Cormorant } from "next/font/google";
 import Link from "next/link";
 import { ArrowLeft, FileText, Info, ShieldCheck, UtensilsCrossed } from "lucide-react";
@@ -22,6 +22,35 @@ export default function PersonalProductInfo({ product: initialProduct }: { produ
   );
   const product = calculatePricing(initialProduct, storedRange ? JSON.parse(storedRange) : undefined);
   const savings = product.originalPrice - product.discountedPrice;
+  const [advice, setAdvice] = useState("");
+  const [adviceNotice, setAdviceNotice] = useState("");
+  const [adviceError, setAdviceError] = useState("");
+  const [loadingAdvice, setLoadingAdvice] = useState(false);
+
+  async function requestAdvice() {
+    if (loadingAdvice) return;
+    setLoadingAdvice(true);
+    setAdviceError("");
+    setAdviceNotice("");
+    try {
+      const response = await fetch("/api/advice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id }),
+        signal: AbortSignal.timeout(45000),
+      });
+      const data = await response.json();
+      if (!response.ok || typeof data.advice !== "string" || !data.advice.trim()) {
+        throw new Error(data.error || "Could not load advice. Please try again.");
+      }
+      setAdvice(data.advice);
+      setAdviceNotice(data.warning || (data.demoMode ? "AI advice is not configured. Standard guidance is shown." : ""));
+    } catch {
+      setAdviceError("Could not load further advice. Please try again.");
+    } finally {
+      setLoadingAdvice(false);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#FAFDF9] text-[#304721]">
@@ -71,7 +100,11 @@ export default function PersonalProductInfo({ product: initialProduct }: { produ
             <li>Check the date label on the packaging before buying and plan when you will use it.</li>
             <li>After opening, follow the package instructions for storage and how soon to use the product.</li>
           </ul>
-          <button type="button" className="mt-5 rounded-xl bg-[#304721] px-4 py-2 text-sm font-bold text-white hover:bg-[#3C9F47] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#304721]">Further advice</button>
+          <button type="button" onClick={requestAdvice} disabled={loadingAdvice} aria-controls="further-advice" className="mt-5 rounded-xl bg-[#304721] px-4 py-2 text-sm font-bold text-white hover:bg-[#3C9F47] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#304721] disabled:cursor-wait disabled:opacity-60">{loadingAdvice ? "Getting advice…" : advice ? "Refresh advice" : "Further advice"}</button>
+          <div id="further-advice" aria-live="polite" aria-busy={loadingAdvice}>
+            {advice && <div className="mt-4 rounded-xl border border-[#53863D]/20 bg-[#FAFDF9] p-4"><h3 className="mb-2 text-sm font-bold">Advice for {product.name}</h3>{adviceNotice && <p className="mb-2 text-xs text-amber-800">{adviceNotice}</p>}<p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">{advice}</p></div>}
+          </div>
+          {adviceError && <p role="alert" className="mt-3 text-sm text-red-600">{adviceError}</p>}
         </section>
       </div>
     </main>

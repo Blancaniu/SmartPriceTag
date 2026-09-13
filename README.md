@@ -18,6 +18,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Further advice with Groq
+
+Add a key from [Groq](https://console.groq.com/keys) to `.env.local` and restart the development server:
+
+```dotenv
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-20b
+```
+
+The personal product page's **Further advice** button calls `/api/advice`. The server loads the product and sends its type, calculated freshness score, expiry information and ingredients to Groq. The key stays on the server. Without a key, or if Groq fails, the page labels the result as standard guidance. Expired products receive a fixed caution instead of generated advice.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
