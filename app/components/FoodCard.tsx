@@ -28,7 +28,7 @@ interface FoodCardProps {
 }
 
 function CategoryIcon({ category }: { category: FoodCategory }) {
-  const className = "h-10 w-10 text-[#53863D]";
+  const className = "h-10 w-10 text-[#536B50]";
   switch (category) {
     case "Fruits":
       return <Apple className={className} />;
@@ -50,7 +50,7 @@ function CategoryIcon({ category }: { category: FoodCategory }) {
 function urgencyColor(level: string): string {
   switch (level) {
     case "low":
-      return "text-[#3C9F47]";
+      return "text-[#2D7545]";
     case "medium":
       return "text-amber-600";
     case "high":
@@ -65,7 +65,7 @@ function urgencyColor(level: string): string {
 function urgencyBg(level: string): string {
   switch (level) {
     case "low":
-      return "bg-[#3C9F47]/10 text-[#304721] border-[#3C9F47]/30";
+      return "bg-[#2D7545]/10 text-[#203B2A] border-[#2D7545]/30";
     case "medium":
       return "bg-amber-500/10 text-amber-800 border-amber-500/30";
     case "high":
@@ -78,8 +78,8 @@ function urgencyBg(level: string): string {
 }
 
 function freshnessBarColor(score: number): string {
-  if (score >= 80) return "bg-[#3C9F47]";
-  if (score >= 60) return "bg-[#6BB744]";
+  if (score >= 80) return "bg-[#2D7545]";
+  if (score >= 60) return "bg-[#BCD980]";
   if (score >= 40) return "bg-amber-400";
   if (score >= 20) return "bg-orange-500";
   return "bg-red-500";
@@ -91,7 +91,7 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
   return (
     <Link href={`/product/${item.id}${business ? "?mode=business" : ""}`} className="block">
       <div
-        className={`food-card group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 transition-all duration-300 hover:border-[#3C9F47] hover:-translate-y-1 ${
+        className={`food-card group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 transition-all duration-300 hover:border-[#2D7545] hover:-translate-y-1 ${
           isCritical ? "critical-pulse" : ""
         }`}
         style={{ animationDelay: `${index * 40}ms` }}
@@ -109,7 +109,7 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
 
         <div>
           {/* Media preview */}
-          <div className="relative mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-2 group-hover:border-[#3C9F47]/20 transition-colors">
+          <div className="relative mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-2 group-hover:border-[#2D7545]/20 transition-colors">
             {item.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -124,7 +124,7 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
             ) : null}
             
             {item.brand && (
-              <div className="absolute bottom-2 left-2 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-[#304721] border border-slate-200/80">
+              <div className="absolute bottom-2 left-2 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-[#203B2A] border border-slate-200/80">
                 {item.brand}
               </div>
             )}
@@ -133,17 +133,17 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
           {/* Title & category */}
           <div className="mb-3">
             <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="inline-block rounded-full bg-[#FAFDF9] border border-[#53863D]/30 px-2 py-0.5 text-[10px] font-bold text-[#304721]">
+              <span className="inline-block rounded-full bg-[#FAF9F5] border border-[#536B50]/30 px-2 py-0.5 text-[10px] font-bold text-[#203B2A]">
                 {item.category}
               </span>
               {item.nutriscore && (
-                <span className="flex items-center gap-1 rounded bg-[#3C9F47]/10 text-[#304721] px-1.5 py-0.5 text-[10px] font-bold border border-[#3C9F47]/30">
-                  <ShieldCheck className="h-3 w-3 text-[#3C9F47]" />
+                <span className="flex items-center gap-1 rounded bg-[#2D7545]/10 text-[#203B2A] px-1.5 py-0.5 text-[10px] font-bold border border-[#2D7545]/30">
+                  <ShieldCheck className="h-3 w-3 text-[#2D7545]" />
                   Nutri-Score {item.nutriscore}
                 </span>
               )}
             </div>
-            <h3 className={`truncate text-2xl font-medium tracking-tight text-[#304721] group-hover:text-[#3C9F47] transition-colors ${cormorant.className}`}>
+            <h3 className={`truncate text-2xl font-medium tracking-tight text-[#203B2A] group-hover:text-[#2D7545] transition-colors ${cormorant.className}`}>
               {item.name}
             </h3>
           </div>
@@ -153,7 +153,7 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
           {/* Freshness Bar */}
           <div className="mb-3">
             <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="text-[#53863D] font-medium">Freshness Score</span>
+              <span className="text-[#536B50] font-medium">Freshness Score</span>
               <span className={`font-bold ${urgencyColor(item.urgencyLevel)}`}>
                 {item.freshnessScore}%
               </span>
@@ -194,7 +194,7 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
                   ${item.originalPrice.toFixed(2)}
                 </span>
               )}
-              <span className="text-xl font-black font-medium text-[#304721]">
+              <span className="text-xl font-black font-medium text-[#203B2A]">
                 ${item.discountedPrice.toFixed(2)}
               </span>
               <span className="ml-1 text-[11px] text-slate-500">/{item.unit}</span>
@@ -206,7 +206,7 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-1 text-xs font-bold text-[#3C9F47] group-hover:translate-x-1 transition-transform">
+            <div className="flex items-center gap-1 text-xs font-bold text-[#2D7545] group-hover:translate-x-1 transition-transform">
               <span>Details</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </div>

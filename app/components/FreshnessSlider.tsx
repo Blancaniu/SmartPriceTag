@@ -38,8 +38,8 @@ export default function FreshnessSlider({
   totalCount,
 }: FreshnessSliderProps) {
   const getBadgeStyle = (val: number) => {
-    if (val >= 80) return "text-[#304721] border-[#3C9F47] bg-[#3C9F47]/15";
-    if (val >= 60) return "text-[#304721] border-[#6BB744] bg-[#6BB744]/15";
+    if (val >= 80) return "text-[#203B2A] border-[#2D7545] bg-[#2D7545]/15";
+    if (val >= 60) return "text-[#203B2A] border-[#BCD980] bg-[#BCD980]/15";
     if (val >= 40) return "text-amber-800 border-amber-400 bg-amber-500/15";
     if (val >= 20) return "text-orange-800 border-orange-400 bg-orange-500/15";
     return "text-red-700 border-red-400 bg-red-500/15";
@@ -50,14 +50,14 @@ export default function FreshnessSlider({
       {/* Header controls & mode toggle */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3C9F47]/10 text-[#3C9F47] border border-[#3C9F47]/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2D7545]/10 text-[#2D7545] border border-[#2D7545]/20">
             <SlidersHorizontal className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-sm font-extrabold text-[#304721]">
+            <h3 className="text-sm font-extrabold text-[#203B2A]">
               {personal ? "Freshness filter" : "Retail AI Freshness Filter & Slider"}
             </h3>
-            <p className="text-xs text-[#53863D]">
+            <p className="text-xs text-[#536B50]">
               {personal ? "Find products that match your preferred freshness." : "Filter inventory by freshness threshold to manage dynamic pricing & waste"}
             </p>
           </div>
@@ -69,8 +69,8 @@ export default function FreshnessSlider({
             onClick={() => onChangeFilterMode("below")}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
               filterMode === "below"
-                ? "bg-[#304721] text-white"
-                : "text-slate-600 hover:text-[#304721]"
+                ? "bg-[#203B2A] text-white"
+                : "text-slate-600 hover:text-[#203B2A]"
             }`}
           >
             <TrendingDown className="h-3.5 w-3.5" />
@@ -80,8 +80,8 @@ export default function FreshnessSlider({
             onClick={() => onChangeFilterMode("above")}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
               filterMode === "above"
-                ? "bg-[#3C9F47] text-white"
-                : "text-slate-600 hover:text-[#304721]"
+                ? "bg-[#2D7545] text-white"
+                : "text-slate-600 hover:text-[#203B2A]"
             }`}
           >
             <TrendingUp className="h-3.5 w-3.5" />
@@ -100,9 +100,9 @@ export default function FreshnessSlider({
           <span className={`rounded-full border px-3 py-0.5 text-sm font-black ${getBadgeStyle(freshnessValue)}`}>
             {filterMode === "below" ? `≤ ${freshnessValue}% Freshness` : `≥ ${freshnessValue}% Freshness`}
           </span>
-          <span className="flex items-center gap-1.5 text-[#53863D] font-semibold">
+          <span className="flex items-center gap-1.5 text-[#536B50] font-semibold">
             100% (Peak Fresh)
-            <span className="h-2 w-2 rounded-full bg-[#3C9F47]" />
+            <span className="h-2 w-2 rounded-full bg-[#2D7545]" />
           </span>
         </div>
 
@@ -114,7 +114,7 @@ export default function FreshnessSlider({
             step={1}
             value={freshnessValue}
             onChange={(e) => onChangeFreshness(Number(e.target.value))}
-            className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-slate-100 accent-[#3C9F47]"
+            className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-slate-100 accent-[#2D7545]"
             id="freshness-range-slider"
           />
         </div>
@@ -124,7 +124,7 @@ export default function FreshnessSlider({
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
         {/* Quick Presets */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="mr-1 text-xs font-semibold text-[#53863D]">Quick Presets:</span>
+          <span className="mr-1 text-xs font-semibold text-[#536B50]">Quick Presets:</span>
           <button
             onClick={() => {
               onChangeFilterMode("below");
@@ -150,9 +150,9 @@ export default function FreshnessSlider({
               onChangeFilterMode("above");
               onChangeFreshness(80);
             }}
-            className="flex items-center gap-1 rounded-full border border-[#3C9F47]/30 bg-[#3C9F47]/10 px-2.5 py-1 text-[11px] font-bold text-[#304721] hover:bg-[#3C9F47]/20 transition-all"
+            className="flex items-center gap-1 rounded-full border border-[#2D7545]/30 bg-[#2D7545]/10 px-2.5 py-1 text-[11px] font-bold text-[#203B2A] hover:bg-[#2D7545]/20 transition-all"
           >
-            <Sparkles className="h-3 w-3 text-[#3C9F47]" />
+            <Sparkles className="h-3 w-3 text-[#2D7545]" />
             Peak Fresh (≥80%)
           </button>
           <button
@@ -169,15 +169,15 @@ export default function FreshnessSlider({
 
         {/* Sort Order Toggle */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-[#53863D]">Sort:</span>
+          <span className="text-xs font-semibold text-[#536B50]">Sort:</span>
           <button
             onClick={() =>
               onChangeSortOrder(sortOrder === "freshest" ? "least-fresh" : "freshest")
             }
-            className="flex items-center gap-1.5 rounded-lg border border-[#304721]/20 bg-[#304721]/5 px-3 py-1.5 text-xs font-bold text-[#304721] hover:bg-[#304721]/10 transition-all"
+            className="flex items-center gap-1.5 rounded-lg border border-[#203B2A]/20 bg-[#203B2A]/5 px-3 py-1.5 text-xs font-bold text-[#203B2A] hover:bg-[#203B2A]/10 transition-all"
             id="sort-direction-button"
           >
-            <ArrowUpDown className="h-3.5 w-3.5 text-[#3C9F47]" />
+            <ArrowUpDown className="h-3.5 w-3.5 text-[#2D7545]" />
             <span>{sortOrder === "freshest" ? "Freshest First" : "Least Fresh First"}</span>
           </button>
         </div>

@@ -58,36 +58,36 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFDF9] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF9F5] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Back Link */}
         <div className="mb-6 flex justify-start">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs font-bold text-[#53863D] hover:text-[#304721] transition-colors"
+            className="flex items-center gap-2 text-xs font-bold text-[#536B50] hover:text-[#203B2A] transition-colors"
           >
-            <ArrowLeft className="h-4 w-4 text-[#3C9F47]" />
+            <ArrowLeft className="h-4 w-4 text-[#2D7545]" />
             Back to Dashboard
           </Link>
         </div>
 
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#304721] text-white mb-3">
-            <Tag className="h-6 w-6 text-[#6BB744]" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#203B2A] text-white mb-3">
+            <Tag className="h-6 w-6 text-[#BCD980]" />
           </div>
-          <h2 className="text-3xl font-black text-[#304721] tracking-tight">
+          <h2 className="text-3xl font-black text-[#203B2A] tracking-tight">
             {mode === "login" ? "Sign In" : accountType === "business" ? "Register Business Account" : "Create Personal Account"}
           </h2>
-          <p className="mt-1 text-xs text-[#53863D]">
+          <p className="mt-1 text-xs text-[#536B50]">
             Browse fresh food or manage your business inventory
           </p>
 
           {/* Supabase status badge */}
           <div className="mt-3">
             {isSupabaseConfigured ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3C9F47]/10 px-3 py-1 text-[11px] font-extrabold text-[#304721] border border-[#3C9F47]/30">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#3C9F47]" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2D7545]/10 px-3 py-1 text-[11px] font-extrabold text-[#203B2A] border border-[#2D7545]/30">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#2D7545]" />
                 Supabase Connected
               </span>
             ) : (
@@ -111,8 +111,8 @@ export default function LoginPage() {
               }}
               className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
                 mode === "login"
-                  ? "bg-[#304721] text-white"
-                  : "text-slate-600 hover:text-[#304721]"
+                  ? "bg-[#203B2A] text-white"
+                  : "text-slate-600 hover:text-[#203B2A]"
               }`}
             >
               Sign In
@@ -125,8 +125,8 @@ export default function LoginPage() {
               }}
               className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
                 mode === "signup"
-                  ? "bg-[#3C9F47] text-white"
-                  : "text-slate-600 hover:text-[#304721]"
+                  ? "bg-[#2D7545] text-white"
+                  : "text-slate-600 hover:text-[#203B2A]"
               }`}
             >
               Create Account
@@ -138,7 +138,7 @@ export default function LoginPage() {
               {(["personal", "business"] as const).map((type) => (
                 <button key={type} type="button" aria-pressed={accountType === type}
                   onClick={() => setAccountType(type)}
-                  className={`flex-1 rounded-xl border p-3 text-xs font-bold ${accountType === type ? "bg-[#304721] text-white" : "text-[#304721]"}`}>
+                  className={`flex-1 rounded-xl border p-3 text-xs font-bold ${accountType === type ? "bg-[#203B2A] text-white" : "text-[#203B2A]"}`}>
                   {type === "business" ? "Register for business" : "Personal account"}
                 </button>
               ))}
@@ -151,8 +151,8 @@ export default function LoginPage() {
             </div>
           )}
           {successMsg && (
-            <div className="mb-4 rounded-xl bg-[#3C9F47]/10 p-3 text-xs font-bold text-[#304721] border border-[#3C9F47]/30">
-              <UserCheck className="inline h-4 w-4 mr-1 text-[#3C9F47]" />
+            <div className="mb-4 rounded-xl bg-[#2D7545]/10 p-3 text-xs font-bold text-[#203B2A] border border-[#2D7545]/30">
+              <UserCheck className="inline h-4 w-4 mr-1 text-[#2D7545]" />
               {successMsg}
             </div>
           )}
@@ -160,36 +160,36 @@ export default function LoginPage() {
           {/* Form */}
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-xs font-bold text-[#304721] mb-1">
+              <label className="block text-xs font-bold text-[#203B2A] mb-1">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#53863D]" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#536B50]" />
                 <input
                   type="email"
                   required
                   placeholder="owner@retailstore.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-xs font-semibold text-[#304721] placeholder-slate-400 outline-none focus:border-[#3C9F47] focus:bg-white"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-xs font-semibold text-[#203B2A] placeholder-slate-400 outline-none focus:border-[#2D7545] focus:bg-white"
                   id="auth-email-input"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#304721] mb-1">
+              <label className="block text-xs font-bold text-[#203B2A] mb-1">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#53863D]" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#536B50]" />
                 <input
                   type="password"
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-xs font-semibold text-[#304721] placeholder-slate-400 outline-none focus:border-[#3C9F47] focus:bg-white"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-xs font-semibold text-[#203B2A] placeholder-slate-400 outline-none focus:border-[#2D7545] focus:bg-white"
                   id="auth-password-input"
                 />
               </div>
@@ -198,7 +198,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-xl border border-[#304721] bg-[#304721] text-xs font-bold text-white hover:bg-[#3C9F47] transition-colors"
+              className="w-full py-2.5 rounded-xl border border-[#203B2A] bg-[#203B2A] text-xs font-bold text-white hover:bg-[#2D7545] transition-colors"
               id="auth-submit-button"
             >
               {loading
@@ -211,13 +211,13 @@ export default function LoginPage() {
 
           {/* Demo Login Quick Fill */}
           <div className="mt-6 border-t border-slate-100 pt-4 text-center">
-            <p className="text-[11px] text-[#53863D] mb-2 font-medium">Quick Demo Sign In:</p>
+            <p className="text-[11px] text-[#536B50] mb-2 font-medium">Quick Demo Sign In:</p>
             <button
               onClick={() => {
                 setEmail("owner@freshmart.com");
                 setPassword("demo123456");
               }}
-              className="text-xs font-bold text-[#3C9F47] hover:underline"
+              className="text-xs font-bold text-[#2D7545] hover:underline"
             >
               Fill Demo Credentials (owner@freshmart.com)
             </button>

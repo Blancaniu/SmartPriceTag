@@ -149,23 +149,23 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
   });
 
   return (
-    <div className="min-h-screen bg-[#FAFDF9]">
+    <div className="min-h-screen bg-[#FAF9F5]">
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* ── Header ─────────────────────────────────── */}
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-slate-200/80 pb-6">
           <div>
             <div className="mb-2 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#304721] text-white">
-                <Tag className="h-6 w-6 text-[#6BB744]" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#203B2A] text-white">
+                <Tag className="h-6 w-6 text-[#BCD980]" />
               </div>
               <div>
-                <h1 className="text-3xl font-black tracking-tight text-[#304721]">
+                <h1 className="text-3xl font-black tracking-tight text-[#203B2A]">
                   Smart
-                  <span className="text-[#3C9F47]">
+                  <span className="text-[#2D7545]">
                     PriceTag
                   </span>
                 </h1>
-                <p className="text-xs font-extrabold text-[#53863D] uppercase tracking-wider">
+                <p className="text-xs font-extrabold text-[#536B50] uppercase tracking-wider">
                   {business ? "Business · Dynamic Retail Pricing Dashboard" : "Personal · Fresh Food & Savings"}
                 </p>
               </div>
@@ -180,18 +180,18 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             {/* Create Product Button */}
             {business && <Link
               href="/create-product"
-              className="flex items-center gap-1.5 rounded-xl border border-[#304721] bg-[#304721] px-4 py-2 text-xs font-bold text-white hover:bg-[#3C9F47] transition-all"
+              className="flex items-center gap-1.5 rounded-xl border border-[#203B2A] bg-[#203B2A] px-4 py-2 text-xs font-bold text-white hover:bg-[#2D7545] transition-all"
               id="header-create-product-button"
             >
               <PlusCircle className="h-4 w-4" />
               <span>Add Product</span>
             </Link>}
-            <Link href={business ? "/" : "/business"} className="text-xs font-bold text-[#304721] underline">{business ? "Personal account" : "Business account"}</Link>
+            <Link href={business ? "/" : "/business"} className="text-xs font-bold text-[#203B2A] underline">{business ? "Personal account" : "Business account"}</Link>
 
             {/* Auth Session Button */}
             {userSession ? (
-              <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-[#304721]">
-                <User className="h-4 w-4 text-[#3C9F47]" />
+              <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-[#203B2A]">
+                <User className="h-4 w-4 text-[#2D7545]" />
                 <span className="max-w-[120px] truncate">{userSession.email}</span>
                 <button
                   onClick={async () => {
@@ -208,10 +208,10 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-[#304721] hover:border-[#3C9F47] transition-all"
+                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-[#203B2A] hover:border-[#2D7545] transition-all"
                 id="header-login-button"
               >
-                <User className="h-4 w-4 text-[#3C9F47]" />
+                <User className="h-4 w-4 text-[#2D7545]" />
                 <span>Sign In</span>
               </Link>
             )}
@@ -222,7 +222,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         <WeatherPricing weather={items[0]?.weather} editable />
 
         {!business && (
-          <h2 className="mb-8 text-6xl font-black leading-[0.9] tracking-tight text-[#3C9F47] sm:text-7xl lg:text-8xl">
+          <h2 className="mb-8 text-6xl font-black leading-[0.9] tracking-tight text-[#2D7545] sm:text-7xl lg:text-8xl">
             <span className="block">Welcome to</span>
             <span className="block">SmartPriceTag</span>
           </h2>
@@ -234,16 +234,16 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             icon={Package}
             label="Total Products"
             value={stats.totalItems}
-            accentBg="bg-[#304721]/10"
-            iconColor="text-[#304721]"
+            accentBg="bg-[#203B2A]/10"
+            iconColor="text-[#203B2A]"
             delay={0}
           />
           <StatsCard
             icon={TrendingDown}
             label="Avg. AI Discount"
             value={`${stats.avgDiscount.toFixed(1)}%`}
-            accentBg="bg-[#3C9F47]/15"
-            iconColor="text-[#3C9F47]"
+            accentBg="bg-[#2D7545]/15"
+            iconColor="text-[#2D7545]"
             delay={50}
           />
           <StatsCard
@@ -258,8 +258,8 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             icon={PiggyBank}
             label="Total Waste Savings"
             value={`$${stats.totalSavings.toFixed(2)}`}
-            accentBg="bg-[#6BB744]/20"
-            iconColor="text-[#304721]"
+            accentBg="bg-[#BCD980]/20"
+            iconColor="text-[#203B2A]"
             delay={150}
           />}
         </div>
@@ -281,7 +281,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
 
         {!business && (
           <section className="mb-6 rounded-2xl border border-slate-200/90 bg-white p-5">
-            <h2 className="mb-4 text-sm font-extrabold text-[#304721]">Price range preference</h2>
+            <h2 className="mb-4 text-sm font-extrabold text-[#203B2A]">Price range preference</h2>
             <PriceRangeSlider value={activePriceRange} ceiling={Math.max(priceCeiling, activePriceRange.max)} onChange={setPersonalPriceRange} />
           </section>
         )}
@@ -290,13 +290,13 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-200/90 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Search Input */}
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#53863D]" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#536B50]" />
             <input
               type="text"
               placeholder="Search product, brand..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-xs font-semibold text-[#304721] placeholder-slate-400 outline-none transition-colors focus:border-[#3C9F47] focus:bg-white focus:ring-1 focus:ring-[#3C9F47]"
+              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-xs font-semibold text-[#203B2A] placeholder-slate-400 outline-none transition-colors focus:border-[#2D7545] focus:bg-white focus:ring-1 focus:ring-[#2D7545]"
               id="dashboard-search-input"
             />
           </div>
@@ -309,8 +309,8 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
                 onClick={() => setSelectedCategory(cat as "All" | FoodCategory)}
                 className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
                   selectedCategory === cat
-                    ? "border-[#304721] bg-[#304721] text-white"
-                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-[#3C9F47] hover:text-[#304721]"
+                    ? "border-[#203B2A] bg-[#203B2A] text-white"
+                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-[#2D7545] hover:text-[#203B2A]"
                 }`}
                 id={`category-pill-${cat.toLowerCase()}`}
               >
@@ -324,21 +324,21 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         <div className="mb-4 flex items-center justify-between">
           <p className="text-xs font-semibold text-slate-600">
             Showing{" "}
-            <span className="font-extrabold text-[#304721]">
+            <span className="font-extrabold text-[#203B2A]">
               {filteredItems.length}
             </span>{" "}
             of <span className="font-bold text-slate-600">{items.length}</span> items
             {selectedCategory !== "All" && (
               <span>
                 {" "}
-                in <span className="font-extrabold text-[#3C9F47]">{selectedCategory}</span>
+                in <span className="font-extrabold text-[#2D7545]">{selectedCategory}</span>
               </span>
             )}
             {" "}
             ({filterMode === "below" ? `Freshness ≤ ${freshnessValue}%` : `Freshness ≥ ${freshnessValue}%`})
           </p>
 
-          <span className="text-xs font-semibold text-[#53863D] hidden sm:block">
+          <span className="text-xs font-semibold text-[#536B50] hidden sm:block">
             {business ? "💡 Click any product to view detailed info & future price simulator" : "Click any product for ingredients and buying advice"}
           </span>
         </div>
@@ -352,8 +352,8 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200/90 bg-white py-16">
-            <Filter className="mb-3 h-10 w-10 text-[#53863D]" />
-            <p className="text-base font-extrabold text-[#304721]">
+            <Filter className="mb-3 h-10 w-10 text-[#536B50]" />
+            <p className="text-base font-extrabold text-[#203B2A]">
               No products match current slider filter
             </p>
             <p className="text-xs text-slate-500 mb-4">
@@ -367,7 +367,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
                 setSearchQuery("");
                 setPersonalPriceRange(null);
               }}
-              className="rounded-xl border border-[#304721] bg-[#304721] px-4 py-2 text-xs font-bold text-white hover:bg-[#3C9F47] transition-all"
+              className="rounded-xl border border-[#203B2A] bg-[#203B2A] px-4 py-2 text-xs font-bold text-white hover:bg-[#2D7545] transition-all"
             >
               Reset All Filters
             </button>
@@ -376,7 +376,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
 
         {/* ── Footer ─────────────────────────────────── */}
         <footer className="mt-16 border-t border-slate-200/80 pt-6 text-center">
-          <p className="text-xs font-semibold text-[#53863D]">
+          <p className="text-xs font-semibold text-[#536B50]">
             SmartPriceTag {business ? "Business Dashboard" : "Personal"} &bull;
           </p>
         </footer>

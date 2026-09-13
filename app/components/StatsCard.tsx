@@ -21,7 +21,7 @@ export default function StatsCard({
 }: StatsCardProps) {
   return (
     <div
-      className="stats-card group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 transition-all duration-300 hover:border-[#3C9F47]/40 hover:-translate-y-0.5"
+      className="stats-card group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 transition-all duration-300 hover:border-[#2D7545]/40 hover:-translate-y-0.5"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="relative z-10 flex items-center gap-4">
@@ -31,10 +31,10 @@ export default function StatsCard({
           <Icon className={`h-6 w-6 ${iconColor}`} />
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#53863D]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#536B50]">
             {label}
           </p>
-          <p className="text-2xl font-extrabold text-[#304721]">{value}</p>
+          <p className="text-2xl font-extrabold text-[#203B2A]">{value}</p>
         </div>
       </div>
     </div>

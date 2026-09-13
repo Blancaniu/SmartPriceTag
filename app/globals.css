@@ -1,17 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafdfa;
-  --foreground: #1c2617;
+  --background: #FAF9F5;
+  --foreground: #203B2A;
   
   /* Palette definitions */
-  --color-brand-primary: #3c9f47;   /* Leaf Green */
-  --color-brand-bright: #6bb744;    /* Meadow Green */
-  --color-brand-dark: #304721;      /* Deep Forest Green */
-  --color-brand-sage: #53863d;      /* Medium Sage Green */
+  --color-brand-primary: #2D7545;   /* Leaf Green */
+  --color-brand-bright: #BCD980;    /* Meadow Green */
+  --color-brand-dark: #203B2A;      /* Deep Forest Green */
+  --color-brand-sage: #536B50;      /* Medium Sage Green */
 }
 
 @theme inline {
+  --color-slate-50: #f5f6f0;
+  --color-slate-100: #edf0e7;
+  --color-slate-200: #dce3d7;
+  --color-slate-300: #bcc8b8;
+  --color-slate-400: #71806f;
+  --color-slate-500: #61705f;
+  --color-slate-600: #4d5d4d;
+  --color-slate-700: #364b39;
+  --color-slate-900: #203b2a;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -25,13 +34,116 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Surface and interaction system; existing sizes, spacing and grids stay intact. */
+.stats-card,
+.food-card {
+  border-radius: 1rem;
+  border-color: #dce3d7;
+  box-shadow: 0 2px 5px #203b2a04, 0 8px 24px #203b2a06;
+}
+
+.food-card h3 {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 650;
+}
+
+.stats-card p:last-child,
+.food-card .font-black {
+  font-variant-numeric: tabular-nums;
+}
+
+.food-card img {
+  background-color: #f5f6f0;
+}
+
+.food-card .animate-pulse {
+  animation: none;
+}
+
+/* Warm citrus accents for offers; safety and expiry states keep their colours. */
+.food-card .border-2.border-red-600 {
+  background-color: #fff3e4;
+  border-color: #eac8a1;
+  color: #9b4314;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+  transition-property: background-color, border-color, box-shadow, color;
+  transition-duration: 160ms;
+}
+
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid #2d7545;
+  outline-offset: 3px;
+}
+
+input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  border-color: #bcc8b8;
+  caret-color: #2d7545;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #61705f;
+  opacity: 1;
+}
+
+input:not([type="range"]):focus,
+select:focus,
+textarea:focus {
+  border-color: #2d7545;
+  box-shadow: 0 0 0 3px #2d754514;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .food-card:hover,
+  .stats-card:hover {
+    border-color: #92b58b;
+    box-shadow: 0 4px 10px #203b2a08, 0 12px 28px #203b2a0d;
+    translate: none;
+  }
+
+  button:not(:disabled):hover {
+    box-shadow: 0 2px 8px #203b2a12;
+  }
+}
+
+button:not(:disabled):active {
+  box-shadow: inset 0 1px 3px #203b2a26;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ── Card entrance animations ──────────────────────── */
 .stats-card {
-  animation: slideUp 0.4s ease-out both;
+  animation: none;
 }
 
 .food-card {
-  animation: fadeSlideUp 0.4s ease-out both;
+  animation: none;
 }
 
 @keyframes slideUp {
@@ -69,12 +181,12 @@ body {
 
 /* ── Critical pulse for expiring items ─────────────── */
 .critical-pulse {
-  animation: fadeSlideUp 0.4s ease-out both;
+  animation: none;
 }
 
 /* ── Custom Range Input Track Styling ──────────────── */
 input[type="range"] {
-  accent-color: #3c9f47;
+  accent-color: #2D7545;
 }
 
 /* ── Smooth Scrollbar ──────────────────────────────── */
@@ -92,13 +204,13 @@ input[type="range"] {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #53863d;
+  background: #536B50;
 }
 
 /* ── Selection styling ─────────────────────────────── */
 ::selection {
   background: rgba(60, 159, 71, 0.2);
-  color: #304721;
+  color: #203B2A;
 }
 
 /* Two accessible handles share one visible price range track. */
@@ -125,7 +237,7 @@ input[type="range"] {
   appearance: none;
   width: 1.25rem;
   height: 1.25rem;
-  border: 2px solid #3c9f47;
+  border: 2px solid #2D7545;
   border-radius: 50%;
   background: white;
   pointer-events: auto;
@@ -135,7 +247,7 @@ input[type="range"] {
 .price-range-slider input[type="range"]::-moz-range-thumb {
   width: 1rem;
   height: 1rem;
-  border: 2px solid #3c9f47;
+  border: 2px solid #2D7545;
   border-radius: 50%;
   background: white;
   pointer-events: auto;
@@ -143,7 +255,7 @@ input[type="range"] {
 }
 
 .price-range-slider input[type="range"]:focus-visible {
-  outline: 2px solid #304721;
+  outline: 2px solid #203B2A;
   outline-offset: 3px;
   border-radius: 999px;
 }
