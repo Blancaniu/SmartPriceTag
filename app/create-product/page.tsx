@@ -15,9 +15,10 @@ import {
   FileText,
 } from "lucide-react";
 import { FoodCategory, CATEGORIES } from "@/app/data/foodData";
+import BusinessGate from "@/app/components/BusinessGate";
 import { saveProduct } from "@/app/lib/supabaseClient";
 
-export default function CreateProductPage() {
+function CreateProductPage() {
   const router = useRouter();
 
   // Form State
@@ -137,14 +138,14 @@ export default function CreateProductPage() {
       if (res.success) {
         setSuccessMsg("Product successfully saved to database! Redirecting...");
         setTimeout(() => {
-          router.push("/");
+          router.push("/business");
           router.refresh();
         }, 1000);
       } else {
         setErrorMsg(res.error || "Failed to save product.");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "An error occurred while saving.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "An error occurred while saving.");
     } finally {
       setSubmitting(false);
     }
@@ -156,7 +157,7 @@ export default function CreateProductPage() {
         {/* Navigation & Header */}
         <div className="mb-6 flex items-center justify-between">
           <Link
-            href="/"
+            href="/business"
             className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-[#304721] transition-all hover:border-[#3C9F47]"
           >
             <ArrowLeft className="h-4 w-4 text-[#3C9F47]" />
@@ -472,4 +473,8 @@ export default function CreateProductPage() {
       </div>
     </div>
   );
+}
+
+export default function ProtectedCreateProductPage() {
+  return <BusinessGate><CreateProductPage /></BusinessGate>;
 }

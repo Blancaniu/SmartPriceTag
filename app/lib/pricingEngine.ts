@@ -31,7 +31,7 @@ export interface ProcessedFoodItem extends FoodItem {
  * 3. Freshness score          = clamp(remaining / total * 100, 0, 100).
  * 4. Map score → discount tier.
  */
-export function calculatePricing(item: FoodItem): ProcessedFoodItem {
+export function calculatePricing(item: FoodItem, range?: { min: number; max: number }): ProcessedFoodItem {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -87,9 +87,10 @@ export function calculatePricing(item: FoodItem): ProcessedFoodItem {
     urgencyLevel = "critical";
   }
 
-  const discountedPrice = parseFloat(
-    (item.originalPrice * (1 - discountPercentage / 100)).toFixed(2)
-  );
+  const suggestedPrice = item.originalPrice * (1 - discountPercentage / 100);
+  const discountedPrice = clampPrice(suggestedPrice, range);
+  discountPercentage = item.originalPrice > 0
+    ? Math.round((1 - discountedPrice / item.originalPrice) * 100) : 0;
 
   return {
     ...item,
@@ -107,5 +108,17 @@ export function calculatePricing(item: FoodItem): ProcessedFoodItem {
  * Process all food items through the pricing engine.
  */
 export function getProcessedFoodItems(): ProcessedFoodItem[] {
-  return foodItems.map(calculatePricing);
+  return foodItems.map(item => calculatePricing(item));
+}
+
+/** Clamp in whole cents so rounding cannot move a price outside the range. */
+export function clampPrice(price: number, range?: { min: number; max: number }): number {
+  const cents = Math.round(price * 100);
+  if (!range) return cents / 100;
+  const min = Math.ceil(range.min * 100);
+  const max = Math.floor(range.max * 100);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min < 0 || max < min) {
+    throw new Error("Invalid price range");
+  }
+  return Math.max(min, Math.min(max, cents)) / 100;
 }

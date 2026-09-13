@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Tag,
@@ -24,12 +25,14 @@ import {
   calculatePricing,
 } from "@/app/lib/pricingEngine";
 import { CATEGORIES, FoodCategory } from "@/app/data/foodData";
-import { getCustomProducts, getCurrentSession, logoutUser, UserSession } from "@/app/lib/supabaseClient";
+import { getCustomProducts, resolveCurrentSession, logoutUser, UserSession } from "@/app/lib/supabaseClient";
+import { applyPricePreference } from "@/app/lib/pricePreferences";
 import StatsCard from "./StatsCard";
 import FoodCard from "./FoodCard";
 import FreshnessSlider, { FilterMode, SortOrder } from "./FreshnessSlider";
 
-export default function Dashboard() {
+export default function Dashboard({ business = false }: { business?: boolean }) {
+  const router = useRouter();
   const [items, setItems] = useState<ProcessedFoodItem[]>(() =>
     getProcessedFoodItems()
   );
@@ -47,7 +50,7 @@ export default function Dashboard() {
 
   // Fetch OpenFoodFacts + Supabase user created products on mount
   useEffect(() => {
-    setUserSession(getCurrentSession());
+    resolveCurrentSession().then(setUserSession);
 
     async function loadData() {
       try {
@@ -63,11 +66,11 @@ export default function Dashboard() {
         }
 
         if (customProds && customProds.length > 0) {
-          const customProcessed = customProds.map(calculatePricing);
+          const customProcessed = customProds.map(item => calculatePricing(item));
           // Combine custom user products at top of list
-          setItems([...customProcessed, ...baseProcessed]);
+          setItems([...customProcessed, ...baseProcessed].map(applyPricePreference));
         } else {
-          setItems(baseProcessed);
+          setItems(baseProcessed.map(applyPricePreference));
         }
       } catch (err) {
         console.error("Failed to load products:", err);
@@ -152,26 +155,27 @@ export default function Dashboard() {
                   </span>
                 </h1>
                 <p className="text-xs font-extrabold text-[#53863D] uppercase tracking-wider">
-                  Open Food Facts Dynamic Retail Pricing Dashboard
+                  {business ? "Business · Dynamic Retail Pricing Dashboard" : "Personal · Fresh Food & Savings"}
                 </p>
               </div>
             </div>
             <p className="text-sm text-slate-600">
-              AI freshness evaluation, shelf-life monitoring &amp; dynamic discount management
+              {business ? "AI freshness evaluation, shelf-life monitoring & dynamic discount management" : "Discover fresh products and find your next food bargain"}
             </p>
           </div>
 
           {/* Right Header Controls */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Create Product Button */}
-            <Link
+            {business && <Link
               href="/create-product"
               className="flex items-center gap-1.5 rounded-xl border border-[#304721] bg-[#304721] px-4 py-2 text-xs font-bold text-white hover:bg-[#3C9F47] transition-all"
               id="header-create-product-button"
             >
               <PlusCircle className="h-4 w-4" />
               <span>Add Product</span>
-            </Link>
+            </Link>}
+            <Link href={business ? "/" : "/business"} className="text-xs font-bold text-[#304721] underline">{business ? "Personal account" : "Business account"}</Link>
 
             {/* Auth Session Button */}
             {userSession ? (
@@ -182,6 +186,7 @@ export default function Dashboard() {
                   onClick={async () => {
                     await logoutUser();
                     setUserSession(null);
+                    if (business) router.push("/");
                   }}
                   title="Sign Out"
                   className="ml-1 text-slate-400 hover:text-red-600 transition-colors"
@@ -315,7 +320,7 @@ export default function Dashboard() {
         {filteredItems.length > 0 ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.map((item, i) => (
-              <FoodCard key={item.id} item={item} index={i} />
+              <FoodCard key={item.id} item={item} index={i} business={business} />
             ))}
           </div>
         ) : (
@@ -344,7 +349,7 @@ export default function Dashboard() {
         {/* ── Footer ─────────────────────────────────── */}
         <footer className="mt-16 border-t border-slate-200/80 pt-6 text-center">
           <p className="text-xs font-semibold text-[#53863D]">
-            SmartPriceTag Retail Dashboard &bull; 
+            SmartPriceTag {business ? "Business Dashboard" : "Personal"} &bull;
           </p>
         </footer>
       </div>

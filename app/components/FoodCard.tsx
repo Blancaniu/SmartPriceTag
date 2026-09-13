@@ -24,6 +24,7 @@ const cormorant = Cormorant({
 interface FoodCardProps {
   item: ProcessedFoodItem;
   index: number;
+  business?: boolean;
 }
 
 function CategoryIcon({ category }: { category: FoodCategory }) {
@@ -84,11 +85,11 @@ function freshnessBarColor(score: number): string {
   return "bg-red-500";
 }
 
-export default function FoodCard({ item, index }: FoodCardProps) {
+export default function FoodCard({ item, index, business = false }: FoodCardProps) {
   const isCritical = item.urgencyLevel === "critical";
 
   return (
-    <Link href={`/product/${item.id}`} className="block">
+    <Link href={`/product/${item.id}${business ? "?mode=business" : ""}`} className="block">
       <div
         className={`food-card group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 transition-all duration-300 hover:border-[#3C9F47] hover:-translate-y-1 ${
           isCritical ? "critical-pulse" : ""

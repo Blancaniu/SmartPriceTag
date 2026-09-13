@@ -12,13 +12,28 @@ import {
   CheckCircle2,
   UtensilsCrossed,
 } from "lucide-react";
-import { ProcessedFoodItem } from "@/app/lib/pricingEngine";
+import PriceRangeSlider from "@/app/components/PriceRangeSlider";
+import { PriceRange, readPriceRange, savePriceRange } from "@/app/lib/pricePreferences";
+import { calculatePricing, clampPrice, ProcessedFoodItem } from "@/app/lib/pricingEngine";
 
 interface ProductDetailClientProps {
   product: ProcessedFoodItem;
+  business?: boolean;
 }
 
-export default function ProductDetailClient({ product }: ProductDetailClientProps) {
+export default function ProductDetailClient({ product: initialProduct, business = false }: ProductDetailClientProps) {
+  const [range, setRange] = useState<PriceRange | undefined>(() => readPriceRange(initialProduct.id));
+  const [saveError, setSaveError] = useState("");
+  const product = calculatePricing(initialProduct, range);
+  const maxPrice = Math.round(product.originalPrice * 100) / 100;
+  const activeRange = range || { min: 0, max: maxPrice };
+  function updateRange(next: PriceRange) {
+    try {
+      savePriceRange(product.id, next);
+      setRange(next);
+      setSaveError("");
+    } catch { setSaveError("Could not save your preference. Please enable browser storage and try again."); }
+  }
   // Simulated future days offset for the AI Pricing Simulator
   const [simulatedDays, setSimulatedDays] = useState(0);
 
@@ -52,9 +67,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     simLabel = "Last Chance";
   }
 
-  const simDiscountedPrice = parseFloat(
-    (product.originalPrice * (1 - simDiscount / 100)).toFixed(2)
-  );
+  const simDiscountedPrice = clampPrice(product.originalPrice * (1 - simDiscount / 100), range);
+  simDiscount = product.originalPrice > 0 ? Math.round((1 - simDiscountedPrice / product.originalPrice) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-[#FAFDF9] text-[#304721]">
@@ -62,7 +76,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         {/* Top bar / Back navigation */}
         <div className="mb-6 flex items-center justify-between">
           <Link
-            href="/"
+            href={business ? "/business" : "/"}
             className="group flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-[#304721] transition-all hover:border-[#3C9F47]"
           >
             <ArrowLeft className="h-4 w-4 text-[#3C9F47] group-hover:-translate-x-1 transition-transform" />
@@ -203,8 +217,17 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           </div>
         </div>
 
+        {business && (
+          <section className="mb-8 rounded-3xl border border-[#304721]/20 bg-white p-6">
+            <h2 className="text-base font-extrabold">Price range preference</h2>
+            <p className="mt-1 mb-4 text-xs text-[#53863D]">All AI prices, including future simulations, stay within this range. Saved in this browser.</p>
+            <PriceRangeSlider value={activeRange} ceiling={maxPrice} onChange={updateRange} />
+            <button type="button" onClick={() => updateRange({ min: 0, max: maxPrice })} className="mt-3 text-xs underline">Reset range</button>
+            {saveError && <p role="alert" className="mt-2 text-sm text-red-600">{saveError}</p>}
+          </section>
+        )}
         {/* ── Interactive AI Future Price Simulator ── */}
-        <div className="mb-8 rounded-3xl border border-[#304721]/20 bg-white p-6">
+        {business && <div className="mb-8 rounded-3xl border border-[#304721]/20 bg-white p-6">
           <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h2 className="text-base font-extrabold text-[#304721] flex items-center gap-2">
@@ -262,6 +285,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           </div>
         </div>
 
+        }
         {/* ── Ingredients & Electronic Shelf Tag Preview ── */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Ingredients & Storage Specs */}

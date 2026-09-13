@@ -22,7 +22,10 @@ const DEMO_USER_KEY = "smartpricetag_user_session";
 const DEMO_REGISTRY_KEY = "smartpricetag_registered_users";
 const DEMO_PRODUCTS_KEY = "smartpricetag_custom_products";
 
+export type AccountType = "personal" | "business";
+
 export interface UserSession {
+  accountType: AccountType;
   email: string;
   id: string;
   createdAt: string;
@@ -30,6 +33,7 @@ export interface UserSession {
 
 /** Stored user record in the local registry (demo mode) */
 interface RegisteredUser {
+  accountType: AccountType;
   email: string;
   passwordHash: string; // simple hash for demo only — NOT production-grade
   id: string;
@@ -87,6 +91,7 @@ export async function loginUser(
         email: data.user.email || email,
         id: data.user.id,
         createdAt: data.user.created_at,
+        accountType: data.user.user_metadata?.account_type === "business" ? "business" : "personal",
       };
       // Also persist to localStorage so getCurrentSession() works across pages
       if (typeof window !== "undefined") {
@@ -119,6 +124,7 @@ export async function loginUser(
     email: existing.email,
     id: existing.id,
     createdAt: existing.createdAt,
+    accountType: existing.accountType || "personal",
   };
   if (typeof window !== "undefined") {
     localStorage.setItem(DEMO_USER_KEY, JSON.stringify(session));
@@ -130,7 +136,8 @@ export async function loginUser(
 
 export async function signUpUser(
   email: string,
-  pass: string
+  pass: string,
+  accountType: AccountType = "personal"
 ): Promise<{ user: UserSession | null; error: string | null; needsVerification?: boolean }> {
   if (pass.length < 6) {
     return { user: null, error: "Password must be at least 6 characters." };
@@ -139,6 +146,7 @@ export async function signUpUser(
   // ── Supabase live mode ──
   if (isSupabaseConfigured && supabase) {
     const { data, error } = await supabase.auth.signUp({
+      options: { data: { account_type: accountType } },
       email,
       password: pass,
     });
@@ -171,6 +179,7 @@ export async function signUpUser(
         email: data.user.email || email,
         id: data.user.id,
         createdAt: data.user.created_at,
+        accountType: data.user.user_metadata?.account_type === "business" ? "business" : "personal",
       };
       if (typeof window !== "undefined") {
         localStorage.setItem(DEMO_USER_KEY, JSON.stringify(session));
@@ -194,6 +203,7 @@ export async function signUpUser(
   }
 
   const newUser: RegisteredUser = {
+    accountType,
     email,
     passwordHash: simpleHash(pass),
     id: `user-${Date.now()}`,
@@ -206,6 +216,7 @@ export async function signUpUser(
     email: newUser.email,
     id: newUser.id,
     createdAt: newUser.createdAt,
+    accountType: newUser.accountType,
   };
   if (typeof window !== "undefined") {
     localStorage.setItem(DEMO_USER_KEY, JSON.stringify(session));
@@ -231,7 +242,8 @@ export function getCurrentSession(): UserSession | null {
   const stored = localStorage.getItem(DEMO_USER_KEY);
   if (!stored) return null;
   try {
-    return JSON.parse(stored) as UserSession;
+    const session = JSON.parse(stored) as UserSession;
+    return { ...session, accountType: session.accountType || "personal" };
   } catch {
     return null;
   }
@@ -245,6 +257,10 @@ export function getCurrentSession(): UserSession | null {
 export async function saveProduct(
   item: Omit<FoodItem, "id">
 ): Promise<{ success: boolean; id: string; error?: string }> {
+  const session = await resolveCurrentSession();
+  if (session?.accountType !== "business") {
+    return { success: false, id: "", error: "Sign in with a business account to add products." };
+  }
   const newId = `user-prod-${Date.now()}`;
   const fullItem: FoodItem = {
     ...item,
@@ -334,4 +350,17 @@ export async function getCustomProducts(): Promise<FoodItem[]> {
   }
 
   return [];
+}
+
+/** Validate live sessions with Supabase rather than trusting the local cache. */
+export async function resolveCurrentSession(): Promise<UserSession | null> {
+  if (!supabase) return getCurrentSession();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return {
+    id: data.user.id,
+    email: data.user.email || "",
+    createdAt: data.user.created_at,
+    accountType: data.user.user_metadata?.account_type === "business" ? "business" : "personal",
+  };
 }

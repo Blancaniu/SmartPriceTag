@@ -4,11 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Tag, ArrowLeft, Lock, Mail, UserCheck, ShieldCheck } from "lucide-react";
-import { loginUser, signUpUser, isSupabaseConfigured } from "@/app/lib/supabaseClient";
+import { loginUser, signUpUser, isSupabaseConfigured, AccountType } from "@/app/lib/supabaseClient";
 
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const [accountType, setAccountType] = useState<AccountType>("personal");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,10 +35,10 @@ export default function LoginPage() {
           setErrorMsg(error);
         } else if (user) {
           setSuccessMsg(`Welcome back, ${user.email}! Redirecting...`);
-          setTimeout(() => router.push("/"), 800);
+          setTimeout(() => router.push(user.accountType === "business" ? "/business" : "/"), 800);
         }
       } else {
-        const { user, error, needsVerification } = await signUpUser(email, password);
+        const { user, error, needsVerification } = await signUpUser(email, password, accountType);
         if (error) {
           setErrorMsg(error);
         } else if (needsVerification) {
@@ -46,11 +47,11 @@ export default function LoginPage() {
           );
         } else if (user) {
           setSuccessMsg(`Account created for ${user.email}! Redirecting...`);
-          setTimeout(() => router.push("/"), 800);
+          setTimeout(() => router.push(user.accountType === "business" ? "/business" : "/"), 800);
         }
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      setErrorMsg((err instanceof Error ? err.message : "") || "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
@@ -76,10 +77,10 @@ export default function LoginPage() {
             <Tag className="h-6 w-6 text-[#6BB744]" />
           </div>
           <h2 className="text-3xl font-black text-[#304721] tracking-tight">
-            {mode === "login" ? "Retail Owner Sign In" : "Register Retail Account"}
+            {mode === "login" ? "Sign In" : accountType === "business" ? "Register Business Account" : "Create Personal Account"}
           </h2>
           <p className="mt-1 text-xs text-[#53863D]">
-            Access SmartPriceTag dynamic inventory management
+            Browse fresh food or manage your business inventory
           </p>
 
           {/* Supabase status badge */}
@@ -132,6 +133,17 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {mode === "signup" && (
+            <div className="mb-6 flex gap-2">
+              {(["personal", "business"] as const).map((type) => (
+                <button key={type} type="button" aria-pressed={accountType === type}
+                  onClick={() => setAccountType(type)}
+                  className={`flex-1 rounded-xl border p-3 text-xs font-bold ${accountType === type ? "bg-[#304721] text-white" : "text-[#304721]"}`}>
+                  {type === "business" ? "Register for business" : "Personal account"}
+                </button>
+              ))}
+            </div>
+          )}
           {/* Error & Success Messages */}
           {errorMsg && (
             <div className="mb-4 rounded-xl bg-red-50 p-3 text-xs font-bold text-red-700 border border-red-200">
@@ -193,7 +205,7 @@ export default function LoginPage() {
                 ? "Processing..."
                 : mode === "login"
                 ? "Sign In to Dashboard"
-                : "Create Retail Account"}
+                : accountType === "business" ? "Create Business Account" : "Create Personal Account"}
             </button>
           </form>
 

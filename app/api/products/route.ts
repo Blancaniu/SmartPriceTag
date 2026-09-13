@@ -5,7 +5,7 @@ import { calculatePricing } from "@/app/lib/pricingEngine";
 export async function GET() {
   try {
     const rawItems = await getAllFoodItems();
-    const processedItems = rawItems.map(calculatePricing);
+    const processedItems = rawItems.map(item => calculatePricing(item));
     return NextResponse.json({ success: true, items: processedItems });
   } catch (error) {
     console.error("Failed to fetch products route:", error);
