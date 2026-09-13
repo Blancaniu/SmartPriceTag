@@ -2,6 +2,7 @@
 // Calculates freshness scores and applies dynamic discount tiers
 
 import { FoodItem, foodItems } from "@/app/data/foodData";
+import type { WeatherDemand } from "./weatherDemand";
 
 export type UrgencyLevel = "low" | "medium" | "high" | "critical";
 
@@ -14,6 +15,9 @@ export type FreshnessLabel =
   | "Expired";
 
 export interface ProcessedFoodItem extends FoodItem {
+  weather?: WeatherDemand;
+  freshnessDiscountPercentage: number;
+  weatherDiscountPoints: number;
   freshnessScore: number; // 0–100
   freshnessLabel: FreshnessLabel;
   discountPercentage: number;
@@ -31,7 +35,7 @@ export interface ProcessedFoodItem extends FoodItem {
  * 3. Freshness score          = clamp(remaining / total * 100, 0, 100).
  * 4. Map score → discount tier.
  */
-export function calculatePricing(item: FoodItem, range?: { min: number; max: number }): ProcessedFoodItem {
+export function calculatePricing(item: FoodItem & { weather?: WeatherDemand }, range?: { min: number; max: number }, weather = item.weather): ProcessedFoodItem {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -87,6 +91,11 @@ export function calculatePricing(item: FoodItem, range?: { min: number; max: num
     urgencyLevel = "critical";
   }
 
+  const freshnessDiscountPercentage = discountPercentage;
+  const weatherDiscountPoints = daysUntilExpiry >= 0 && weather?.status === "available"
+    && weather.observedAt && Date.now() - Date.parse(weather.observedAt) <= 7200000
+    ? Math.max(0, Math.min(10, weather.discountPoints)) : 0;
+  discountPercentage = Math.min(75, discountPercentage + weatherDiscountPoints);
   const suggestedPrice = item.originalPrice * (1 - discountPercentage / 100);
   const discountedPrice = clampPrice(suggestedPrice, range);
   discountPercentage = item.originalPrice > 0
@@ -94,6 +103,9 @@ export function calculatePricing(item: FoodItem, range?: { min: number; max: num
 
   return {
     ...item,
+    weather,
+    freshnessDiscountPercentage,
+    weatherDiscountPoints,
     freshnessScore,
     freshnessLabel,
     discountPercentage,

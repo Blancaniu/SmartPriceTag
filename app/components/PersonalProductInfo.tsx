@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, FileText, Info, ShieldCheck, UtensilsCrossed } from "lucide-react";
 import { readPriceRange } from "@/app/lib/pricePreferences";
 import { calculatePricing, ProcessedFoodItem } from "@/app/lib/pricingEngine";
+import WeatherPricing from "./WeatherPricing";
 
 const cormorant = Cormorant({ weight: ["400", "600", "700"], subsets: ["latin"] });
 
@@ -89,6 +90,7 @@ export default function PersonalProductInfo({ product: initialProduct }: { produ
             </div>
           </div>
         </section>
+        <WeatherPricing weather={product.weather} />
         <section className="mb-4 rounded-2xl border border-slate-200/90 bg-white p-6">
           <h2 className="mb-3 flex items-center gap-2 text-sm font-extrabold"><FileText className="h-4 w-4 text-[#3C9F47]" />Ingredients</h2>
           <p className="text-sm leading-relaxed text-slate-600">{product.ingredients || "Ingredients are not available. Check the product packaging for the full list."}</p>

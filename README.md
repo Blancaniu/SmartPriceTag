@@ -33,6 +33,18 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Weather-adjusted discounts
+
+Choose **Use my location** to request browser geolocation, or enter a city manually. Geolocation requires browser permission and HTTPS (or localhost). Coordinates are rounded to three decimal places, saved for 24 hours in this browser and sent to OpenWeather for current weather. Applying a manual city clears the saved coordinates.
+
+Set `OPENWEATHER_API_KEY` in `.env.local`, restart the server, and select a city and country (for example `Sydney, AU`) in the dashboard. The location is saved for this browser. `OPENWEATHER_LOCATION` is an optional server default.
+
+The server uses [OpenWeather current weather](https://openweathermap.org/current) with metric units, cached for 10 minutes. Refresh the dashboard to update prices. Failed requests, missing configuration and readings over two hours old apply no weather adjustment.
+
+Initial business rules add 5 discount percentage points for rain/drizzle, reduced visibility, wind of at least 8 m/s or heat of at least 32°C. Thunderstorms, snow, tornadoes, rain of at least 4 mm/h, wind of at least 14 m/s, temperatures at least 38°C or at most 0°C add 10 points instead. Rules do not stack. Other conditions add zero. These are estimates of reduced visits, not predictions learned from sales data.
+
+Weather does not change freshness. Combined discounts are capped at 75%, then existing price bounds apply. Expired items get no extra weather discount. Future simulations hold current weather constant, rather than forecasting it.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

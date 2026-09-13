@@ -3,6 +3,7 @@ import BusinessGate from "@/app/components/BusinessGate";
 import { notFound } from "next/navigation";
 import { getAllFoodItems } from "@/app/lib/openFoodFacts";
 import { calculatePricing } from "@/app/lib/pricingEngine";
+import { getWeatherDemand } from "@/app/lib/openWeather";
 import ProductDetailClient from "./ProductDetailClient";
 
 interface PageProps {
@@ -14,8 +15,8 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
   const { id } = await params;
   const business = (await searchParams).mode === "business";
 
-  const rawItems = await getAllFoodItems();
-  const processedItems = rawItems.map(item => calculatePricing(item));
+  const [rawItems, weather] = await Promise.all([getAllFoodItems(), getWeatherDemand()]);
+  const processedItems = rawItems.map(item => calculatePricing(item, undefined, weather));
   const product = processedItems.find((item) => item.id === id);
 
   if (!product) {

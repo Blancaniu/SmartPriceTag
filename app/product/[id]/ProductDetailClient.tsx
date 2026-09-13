@@ -13,6 +13,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import PriceRangeSlider from "@/app/components/PriceRangeSlider";
+import WeatherPricing from "@/app/components/WeatherPricing";
 import { PriceRange, readPriceRange, savePriceRange } from "@/app/lib/pricePreferences";
 import { calculatePricing, clampPrice, ProcessedFoodItem } from "@/app/lib/pricingEngine";
 
@@ -67,6 +68,7 @@ export default function ProductDetailClient({ product: initialProduct, business 
     simLabel = "Last Chance";
   }
 
+  simDiscount = Math.min(75, simDiscount + (simulatedDaysRemaining >= 0 ? product.weatherDiscountPoints : 0));
   const simDiscountedPrice = clampPrice(product.originalPrice * (1 - simDiscount / 100), range);
   simDiscount = product.originalPrice > 0 ? Math.round((1 - simDiscountedPrice / product.originalPrice) * 100) : 0;
 
@@ -217,6 +219,7 @@ export default function ProductDetailClient({ product: initialProduct, business 
           </div>
         </div>
 
+        <WeatherPricing weather={product.weather} />
         {business && (
           <section className="mb-8 rounded-3xl border border-[#304721]/20 bg-white p-6">
             <h2 className="text-base font-extrabold">Price range preference</h2>
@@ -235,7 +238,7 @@ export default function ProductDetailClient({ product: initialProduct, business 
                 AI Future Price &amp; Freshness Simulator
               </h2>
               <p className="text-xs text-[#53863D]">
-                Simulate how time decay automatically recalculates discounts and dynamic price tags
+                Simulate time decay with today&apos;s weather adjustment held constant; this is not a weather forecast.
               </p>
             </div>
 

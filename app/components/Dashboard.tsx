@@ -31,6 +31,7 @@ import { PriceRange } from "@/app/lib/pricePreferences";
 import { applyPricePreference } from "@/app/lib/pricePreferences";
 import StatsCard from "./StatsCard";
 import FoodCard from "./FoodCard";
+import WeatherPricing from "./WeatherPricing";
 import FreshnessSlider, { FilterMode, SortOrder } from "./FreshnessSlider";
 
 export default function Dashboard({ business = false }: { business?: boolean }) {
@@ -72,7 +73,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         }
 
         if (customProds && customProds.length > 0) {
-          const customProcessed = customProds.map(item => calculatePricing(item));
+          const customProcessed = customProds.map(item => calculatePricing(item, undefined, apiRes?.weather));
           // Combine custom user products at top of list
           setItems([...customProcessed, ...baseProcessed].map(applyPricePreference));
         } else {
@@ -218,6 +219,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             
           </div>
         </header>
+        <WeatherPricing weather={items[0]?.weather} editable />
 
         {!business && (
           <h2 className="mb-8 text-6xl font-black leading-[0.9] tracking-tight text-[#3C9F47] sm:text-7xl lg:text-8xl">
