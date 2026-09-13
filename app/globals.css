@@ -410,3 +410,9 @@ input[type="range"] {
 .meal-prep-recipe-option button[aria-pressed='true'] { background: #203b2a; color: white; border-color: #203b2a; }
 .meal-prep-recipe-option button[aria-pressed='true']:hover:not(:disabled) { background: #2d7545; }
 .meal-prep-recipe-option p { margin-top: 7px; }
+.meal-prep-sliders { padding: 14px; margin-bottom: 16px; background: #f5f8ef; border: 1px solid #e0e7d5; border-radius: 10px; }
+.meal-prep-filter-title { font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+.meal-prep-freshness-label { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+.meal-prep-freshness-slider { width: 100%; accent-color: #2d7545; margin: 12px 0; }
+.meal-prep-filter-summary { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 11px; color: #637456; }
+.meal-prep-filter-summary button, .meal-prep-hint button { text-decoration: underline; text-underline-offset: 3px; font-weight: 650; }

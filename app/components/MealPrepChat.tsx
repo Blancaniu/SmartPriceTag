@@ -2,11 +2,13 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { ChefHat, Send, Sparkles, RotateCcw, LoaderCircle } from "lucide-react";
+import PriceRangeSlider from "./PriceRangeSlider";
+import type { PriceRange } from "@/app/lib/pricePreferences";
 
 type Message = { role: "user" | "assistant"; content: string };
 type PlanContext = { ingredients: string; preferences: string; servings: number; days: number };
 
-export type MealPrepProduct = { id: string; name: string; category: string; unit?: string; expiryDate: string; currentPrice: number; originalPrice: number; discountPercentage: number };
+export type MealPrepProduct = { id: string; name: string; category: string; unit?: string; expiryDate: string; currentPrice: number; originalPrice: number; discountPercentage: number; freshnessScore: number };
 
 type Props = { products: MealPrepProduct[]; selectedIds: string[]; onToggleProduct: (id: string) => void; onSelectProducts: (ids: string[]) => void };
 
@@ -15,12 +17,23 @@ export default function MealPrepChat({ products, selectedIds, onToggleProduct, o
   const [cheapestCount, setCheapestCount] = useState(4);
   const [priceSort, setPriceSort] = useState(false);
   const [includeRecipes, setIncludeRecipes] = useState(false);
-  const cheapestProducts = [...products].sort((a, b) => a.currentPrice - b.currentPrice || a.name.localeCompare(b.name));
-  const displayedProducts = priceSort ? cheapestProducts : products;
+  const [priceRange, setPriceRange] = useState<PriceRange | null>(null);
+  const [minimumFreshness, setMinimumFreshness] = useState(0);
+  const priceCeiling = Math.max(1, Math.ceil(Math.max(0, ...products.map(product => product.currentPrice))), priceRange?.max ?? 0);
+  const activePriceRange = priceRange ?? { min: 0, max: priceCeiling };
+  const matchingProducts = products.filter(product => product.currentPrice >= activePriceRange.min && product.currentPrice <= activePriceRange.max && product.freshnessScore >= minimumFreshness);
+  function updateFilters(range: PriceRange, freshness: number) {
+    setPriceRange(range);
+    setMinimumFreshness(freshness);
+    onSelectProducts(products.filter(product => selectedIds.includes(product.id) && product.currentPrice >= range.min && product.currentPrice <= range.max && product.freshnessScore >= freshness).map(product => product.id));
+  }
+  const cheapestProducts = [...matchingProducts].sort((a, b) => a.currentPrice - b.currentPrice || a.name.localeCompare(b.name));
+  const displayedProducts = priceSort ? cheapestProducts : matchingProducts;
   const selected = products.filter(product => selectedIds.includes(product.id));
+  const outsideFilters = selected.some(product => !matchingProducts.some(match => match.id === product.id));
   const totalCents = selected.reduce((sum, product) => sum + Math.round(product.currentPrice * 100), 0);
   const originalCents = selected.reduce((sum, product) => sum + Math.round(product.originalPrice * 100), 0);
-  const ingredients = selected.map(product => `${product.name.slice(0, 120)} (${product.category}; listing unit: ${(product.unit || "not specified").slice(0, 40)}; price AUD $${product.currentPrice.toFixed(2)}; original $${product.originalPrice.toFixed(2)}; discount ${product.discountPercentage}%; use-by: ${product.expiryDate.slice(0, 10)})`).join("\n");
+  const ingredients = selected.map(product => `${product.name.slice(0, 120)} (${product.category}; listing unit: ${(product.unit || "not specified").slice(0, 40)}; price AUD $${product.currentPrice.toFixed(2)}; original $${product.originalPrice.toFixed(2)}; discount ${product.discountPercentage}%; freshness ${product.freshnessScore}%; use-by: ${product.expiryDate.slice(0, 10)})`).join("\n");
   const [preferences, setPreferences] = useState("");
   const [servings, setServings] = useState(2);
   const [days, setDays] = useState(3);
@@ -85,12 +98,21 @@ export default function MealPrepChat({ products, selectedIds, onToggleProduct, o
         }}>
           <fieldset className="meal-prep-product-picker" disabled={pending}>
             <legend>Choose listed products ({selected.length}/8)</legend>
-            <div className="meal-prep-budget-controls"><label htmlFor={`${id}-cheapest-count`}>Number of products<select id={`${id}-cheapest-count`} value={cheapestCount} onChange={event => setCheapestCount(Number(event.target.value))}>{Array.from({ length: 8 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}</select></label><button type="button" disabled={products.length === 0} onClick={() => { onSelectProducts(cheapestProducts.slice(0, cheapestCount).map(product => product.id)); setPriceSort(true); }}>Choose cheapest</button></div>
-            <p className="meal-prep-hint">Replaces your selection with the lowest current prices per listed unit, after discounts. Pack sizes vary.</p>
+            <div className="meal-prep-sliders">
+              <p className="meal-prep-filter-title">Price per listed unit (AUD)</p>
+              <PriceRangeSlider value={activePriceRange} ceiling={priceCeiling} onChange={range => updateFilters(range, minimumFreshness)} />
+              <label className="meal-prep-freshness-label" htmlFor={`${id}-freshness`}>Minimum freshness <strong>{minimumFreshness}%</strong></label>
+              <input id={`${id}-freshness`} className="meal-prep-freshness-slider" type="range" min={0} max={100} step={1} value={minimumFreshness} aria-valuetext={`${minimumFreshness}% freshness or higher`} onChange={event => updateFilters(activePriceRange, Number(event.target.value))} />
+              <p className="meal-prep-hint">Show products with freshness of {minimumFreshness}% or higher. Changing filters removes selections outside the range.</p>
+              <div className="meal-prep-filter-summary"><span role="status">{matchingProducts.length} of {products.length} products match</span><button type="button" onClick={() => { setPriceRange(null); setMinimumFreshness(0); }}>Reset filters</button></div>
+            </div>
+            <div className="meal-prep-budget-controls"><label htmlFor={`${id}-cheapest-count`}>Number of products<select id={`${id}-cheapest-count`} value={cheapestCount} onChange={event => setCheapestCount(Number(event.target.value))}>{Array.from({ length: 8 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}</select></label><button type="button" disabled={matchingProducts.length === 0} onClick={() => { onSelectProducts(cheapestProducts.slice(0, cheapestCount).map(product => product.id)); setPriceSort(true); }}>Choose cheapest</button></div>
+            <p className="meal-prep-hint">Replaces your selection with the cheapest products matching your price and freshness filters. Pack sizes vary.</p>
             <label className="meal-prep-price-sort"><input type="checkbox" checked={priceSort} onChange={event => setPriceSort(event.target.checked)} /> Show cheapest first</label>
-            <div className="meal-prep-product-options">{displayedProducts.map(product => <label key={product.id} className="meal-prep-product-option"><input type="checkbox" checked={selectedIds.includes(product.id)} disabled={!selectedIds.includes(product.id) && selected.length >= 8} onChange={() => onToggleProduct(product.id)} /><span><strong>{product.name}</strong><small>{product.category}{product.unit ? ` / ${product.unit}` : ""}</small><small className="meal-prep-product-price"><b>${product.currentPrice.toFixed(2)}</b>{product.originalPrice > product.currentPrice && <del>${product.originalPrice.toFixed(2)}</del>}<em>{product.discountPercentage > 0 ? `${product.discountPercentage}% off` : "No discount"}</em></small></span></label>)}</div>
-            {products.length === 0 && <p className="meal-prep-hint">No available products to plan with yet.</p>}
+            <div className="meal-prep-product-options">{displayedProducts.map(product => <label key={product.id} className="meal-prep-product-option"><input type="checkbox" checked={selectedIds.includes(product.id)} disabled={!selectedIds.includes(product.id) && selected.length >= 8} onChange={() => onToggleProduct(product.id)} /><span><strong>{product.name}</strong><small>{product.category}{product.unit ? ` / ${product.unit}` : ""} / {product.freshnessScore}% fresh</small><small className="meal-prep-product-price"><b>${product.currentPrice.toFixed(2)}</b>{product.originalPrice > product.currentPrice && <del>${product.originalPrice.toFixed(2)}</del>}<em>{product.discountPercentage > 0 ? `${product.discountPercentage}% off` : "No discount"}</em></small></span></label>)}</div>
+            {matchingProducts.length === 0 && <p className="meal-prep-hint">No products match. Widen the price range, lower minimum freshness, or reset the filters.</p>}
           </fieldset>
+          {outsideFilters && <p className="meal-prep-hint" role="status">Some products selected from the store are outside these filters. Reset the filters or <button type="button" disabled={pending} onClick={() => updateFilters(activePriceRange, minimumFreshness)}>remove those products</button> before generating a plan.</p>}
           {selected.length > 0 && <div className="meal-prep-cost-summary"><span>Selected products <strong>${(totalCents / 100).toFixed(2)}</strong></span><span>You save <strong>${(Math.max(0, originalCents - totalCents) / 100).toFixed(2)}</strong></span><small>AUD, one listed unit of each selected product. Your meal plan may need different quantities or extras.</small></div>}
           <div className="meal-prep-quick-actions meal-prep-recipe-option">
             <button type="button" disabled={pending} aria-pressed={includeRecipes} onClick={() => setIncludeRecipes(value => !value)}><ChefHat size={16} />Include recipes<span>{includeRecipes ? "On" : "Off"}</span></button>
@@ -101,7 +123,7 @@ export default function MealPrepChat({ products, selectedIds, onToggleProduct, o
           <div className="meal-prep-numbers"><label htmlFor={`${id}-people`}>People<input id={`${id}-people`} type="number" required min={1} max={12} value={servings} onChange={event => setServings(Number(event.target.value))} disabled={pending} /></label><label htmlFor={`${id}-days`}>Days to plan<input id={`${id}-days`} type="number" required min={1} max={7} value={days} onChange={event => setDays(Number(event.target.value))} disabled={pending} /></label></div>
           <label htmlFor={`${id}-preferences`}>Dietary needs &amp; preferences <span>(optional)</span></label>
           <textarea id={`${id}-preferences`} maxLength={1000} value={preferences} onChange={event => setPreferences(event.target.value)} placeholder="Allergies, vegetarian, budget, cooking time…" rows={2} disabled={pending} />
-          <button className="meal-prep-plan" type="submit" disabled={pending || !ingredients.trim()}>{pending ? <LoaderCircle className="animate-spin" size={17} /> : <Sparkles size={17} />}{pending ? "Preparing your reply…" : context ? "Create a new plan" : "Plan my meals"}</button>
+          <button className="meal-prep-plan" type="submit" disabled={pending || !ingredients.trim() || outsideFilters}>{pending ? <LoaderCircle className="animate-spin" size={17} /> : <Sparkles size={17} />}{pending ? "Preparing your reply…" : context ? "Create a new plan" : "Plan my meals"}</button>
           <p className="meal-prep-hint">Your selected products and messages are sent to our AI provider to prepare your plan.</p>
         </form>
         <div className="meal-prep-conversation">

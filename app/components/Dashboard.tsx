@@ -142,13 +142,6 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
     return { totalItems, avgDiscount, expiringSoon, expired, bestDiscount };
   }, [items, business]);
 
-  const todayStr = new Date().toLocaleDateString("en-AU", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
   return (
     <div className={`${business ? "business-dashboard" : "foodmart"} min-h-screen`}>
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -239,7 +232,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         )}
         {business && <section id="weather" className="fm-weather"><div className="fm-section-title"><h2>Weather &amp; pricing conditions</h2></div><WeatherPricing weather={items[0]?.weather} editable /></section>}
         {!business && <MealPrepChat products={items.filter(item => item.daysUntilExpiry >= 0).map(item => ({ ...item, currentPrice: item.discountedPrice }))} selectedIds={mealProductIds} onToggleProduct={toggleMealProduct} onSelectProducts={setMealProductIds} />}
-        <div id="products" className="fm-section-title"><h2>{business ? "Your inventory" : "Fresh finds for you"}</h2><span>{isLoadingApi ? "Updating products..." : todayStr}</span></div>
+        <div id="products" className="fm-section-title"><h2>{business ? "Your inventory" : "Fresh finds for you"}</h2>{isLoadingApi && <span>Updating products...</span>}</div>
         {/* ── Stats row ──────────────────────────────── */}
         <div className={`mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 ${business ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
           <StatsCard
@@ -390,12 +383,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           </div>
         )}
 
-        {/* ── Footer ─────────────────────────────────── */}
-        <footer className="mt-16 border-t border-slate-200/80 pt-6 text-center">
-          <p className="text-xs font-semibold text-[#536B50]">
-            F-freshie {business ? "Business Dashboard" : "Personal"} &bull; Design adapted from FoodMart by TemplatesJungle
-          </p>
-        </footer>
+
       </div>
     </div>
   );

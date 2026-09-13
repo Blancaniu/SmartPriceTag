@@ -89,7 +89,6 @@ export default function WeatherPricing({ weather, editable = false }: { weather?
       <StatsCard icon={Users} label="Estimated store visits" value={traffic} accentBg="bg-[#2D7545]/15" iconColor="text-[#2D7545]" delay={50} />
       <StatsCard icon={TrendingDown} label="Weather discount" value={`+${available ? weather.discountPoints : 0} pts`} accentBg="bg-[#BCD980]/20" iconColor="text-[#203B2A]" delay={100} />
     </div>
-    {available && <p className="mt-3 px-1 text-right text-xs text-[#536B50]">OpenWeather · Adjustment before price limits</p>}
 
   </section>;
 }
