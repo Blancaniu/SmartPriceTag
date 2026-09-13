@@ -153,7 +153,7 @@ export default function ProductDetailClient({ product: initialProduct, business 
 
               <h1 className="text-3xl font-black text-[#203B2A] mb-2">{product.name}</h1>
               <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                {product.description || "Fresh premium grocery item managed by SmartPriceTag automated freshness tracking and dynamic markdown engine."}
+                {product.description || "Fresh premium grocery item managed by F-freshie automated freshness tracking and dynamic markdown engine."}
               </p>
 
               {/* AI Pricing Card */}

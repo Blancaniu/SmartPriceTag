@@ -157,10 +157,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
               </div>
               <div>
                 <h1 className="text-3xl font-black tracking-tight text-[#203B2A]">
-                  Smart
-                  <span className="text-[#2D7545]">
-                    PriceTag
-                  </span>
+                  F-<span className="text-[#2D7545]">freshie</span>
                 </h1>
                 <p className="text-xs font-extrabold text-[#536B50] uppercase tracking-wider">
                   {business ? "Business · Dynamic Retail Pricing Dashboard" : "Personal · Fresh Food & Savings"}
@@ -375,7 +372,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         {/* ── Footer ─────────────────────────────────── */}
         <footer className="mt-16 border-t border-slate-200/80 pt-6 text-center">
           <p className="text-xs font-semibold text-[#536B50]">
-            SmartPriceTag {business ? "Business Dashboard" : "Personal"} &bull; Design adapted from FoodMart by TemplatesJungle
+            F-freshie {business ? "Business Dashboard" : "Personal"} &bull; Design adapted from FoodMart by TemplatesJungle
           </p>
         </footer>
       </div>

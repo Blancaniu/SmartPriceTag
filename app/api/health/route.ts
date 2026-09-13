@@ -1,3 +1,3 @@
 export async function GET() {
-  return Response.json({ ok: true, service: "SmartPriceTag", time: new Date().toISOString() });
+  return Response.json({ ok: true, service: "F-freshie", time: new Date().toISOString() });
 }

@@ -40,7 +40,7 @@ export async function fetchOpenFoodFactsProducts(): Promise<FoodItem[]> {
       "https://world.openfoodfacts.org/api/v2/search?categories_tags_en=groceries&fields=code,product_name,brands,image_front_url,image_url,ingredients_text,nutriscore_grade,categories_tags,quantity&page_size=15",
       {
         headers: {
-          "User-Agent": "SmartPriceTagApp/1.0 (contact@smartpricetag.com)",
+          "User-Agent": "F-freshie/1.0 (contact@smartpricetag.com)",
         },
         next: { revalidate: 3600 },
       }

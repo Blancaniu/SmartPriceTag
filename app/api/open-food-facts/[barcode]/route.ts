@@ -1,7 +1,7 @@
 export async function GET(_request: Request, context: RouteContext<"/api/open-food-facts/[barcode]">) {
   const { barcode } = await context.params;
   const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json`, {
-    headers: { "User-Agent": "SmartPriceTag/1.0 (student hackathon project)" },
+    headers: { "User-Agent": "F-freshie/1.0 (student hackathon project)" },
     cache: "no-store",
   });
   if (!response.ok) return Response.json({ error: "Open Food Facts lookup failed." }, { status: 502 });

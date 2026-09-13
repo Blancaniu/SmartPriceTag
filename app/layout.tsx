@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SmartPriceTag — AI Food Pricing Dashboard",
+  title: "F-freshie — AI Food Pricing Dashboard",
   description:
     "AI-powered dynamic pricing dashboard for retail food inventory. Automatically adjusts prices based on food freshness and expiry dates.",
 };
