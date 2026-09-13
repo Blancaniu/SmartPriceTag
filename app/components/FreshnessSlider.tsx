@@ -44,7 +44,7 @@ export default function FreshnessSlider({
   };
 
   return (
-    <div className="w-full rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm transition-all duration-300">
+    <div className="w-full rounded-2xl border border-slate-200/90 bg-white p-5 transition-all duration-300">
       {/* Header controls & mode toggle */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
@@ -67,7 +67,7 @@ export default function FreshnessSlider({
             onClick={() => onChangeFilterMode("below")}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
               filterMode === "below"
-                ? "bg-[#304721] text-white shadow-xs"
+                ? "bg-[#304721] text-white"
                 : "text-slate-600 hover:text-[#304721]"
             }`}
           >
@@ -78,7 +78,7 @@ export default function FreshnessSlider({
             onClick={() => onChangeFilterMode("above")}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
               filterMode === "above"
-                ? "bg-[#3C9F47] text-white shadow-xs"
+                ? "bg-[#3C9F47] text-white"
                 : "text-slate-600 hover:text-[#304721]"
             }`}
           >
@@ -112,7 +112,7 @@ export default function FreshnessSlider({
             step={1}
             value={freshnessValue}
             onChange={(e) => onChangeFreshness(Number(e.target.value))}
-            className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-slate-100 shadow-inner accent-[#3C9F47]"
+            className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-slate-100 accent-[#3C9F47]"
             id="freshness-range-slider"
           />
         </div>

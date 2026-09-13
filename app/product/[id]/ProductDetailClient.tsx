@@ -4,19 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Sparkles,
-  Package,
-  Calendar,
-  Clock,
-  FileText,
   ShieldCheck,
-  QrCode,
+  FileText,
   Tag,
-  Activity,
   Info,
   SlidersHorizontal,
   CheckCircle2,
-  AlertTriangle,
   UtensilsCrossed,
 } from "lucide-react";
 import { ProcessedFoodItem } from "@/app/lib/pricingEngine";
@@ -70,7 +63,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         <div className="mb-6 flex items-center justify-between">
           <Link
             href="/"
-            className="group flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-[#304721] transition-all hover:border-[#3C9F47] hover:shadow-sm"
+            className="group flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-[#304721] transition-all hover:border-[#3C9F47]"
           >
             <ArrowLeft className="h-4 w-4 text-[#3C9F47] group-hover:-translate-x-1 transition-transform" />
             <span>Back to Dashboard</span>
@@ -88,7 +81,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Left Column: Product Image & Badges */}
           <div className="lg:col-span-5">
-            <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-4 shadow-sm">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-4">
               <div className="relative flex h-80 w-full items-center justify-center overflow-hidden rounded-2xl bg-slate-50 border border-slate-100">
                 {product.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -103,7 +96,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
                 {/* Discount Badge */}
                 {product.discountPercentage > 0 && (
-                  <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-1 text-xs font-black shadow-md">
+                  <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-1 text-xs font-black">
                     <Tag className="h-3.5 w-3.5" />
                     -{product.discountPercentage}% AI DISCOUNT
                   </div>
@@ -148,7 +141,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               </p>
 
               {/* AI Pricing Card */}
-              <div className="rounded-2xl border border-[#3C9F47]/30 bg-gradient-to-br from-[#FAFDF9] via-white to-[#3C9F47]/10 p-6 shadow-sm">
+              <div className="rounded-2xl border border-[#3C9F47]/30 bg-gradient-to-br from-[#FAFDF9] via-white to-[#3C9F47]/10 p-6">
                 <div className="flex items-center justify-between border-b border-slate-200/80 pb-4 mb-4">
                   <div>
                     <span className="text-xs uppercase tracking-wider font-extrabold text-[#53863D]">
@@ -192,15 +185,15 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
             {/* Metadata stat items */}
             <div className="grid grid-cols-3 gap-3 text-center text-xs">
-              <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+              <div className="rounded-xl border border-slate-200 bg-white p-3">
                 <span className="text-slate-500 block mb-1 font-semibold">Stocked Date</span>
                 <span className="font-extrabold text-[#304721]">{product.stockDate}</span>
               </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+              <div className="rounded-xl border border-slate-200 bg-white p-3">
                 <span className="text-slate-500 block mb-1 font-semibold">Expiry Date</span>
                 <span className="font-extrabold text-[#304721]">{product.expiryDate}</span>
               </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+              <div className="rounded-xl border border-slate-200 bg-white p-3">
                 <span className="text-slate-500 block mb-1 font-semibold">Days Remaining</span>
                 <span className={`font-black ${product.daysUntilExpiry <= 1 ? "text-red-600" : "text-[#3C9F47]"}`}>
                   {product.daysUntilExpiry < 0 ? "Expired" : `${product.daysUntilExpiry} Days`}
@@ -211,7 +204,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         </div>
 
         {/* ── Interactive AI Future Price Simulator ── */}
-        <div className="mb-8 rounded-3xl border border-[#304721]/20 bg-white p-6 shadow-sm">
+        <div className="mb-8 rounded-3xl border border-[#304721]/20 bg-white p-6">
           <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h2 className="text-base font-extrabold text-[#304721] flex items-center gap-2">
@@ -273,7 +266,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Ingredients & Storage Specs */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-6">
               <h3 className="text-sm font-extrabold text-[#304721] mb-2 flex items-center gap-2">
                 <FileText className="h-4 w-4 text-[#3C9F47]" />
                 Ingredients &amp; Verification
@@ -283,7 +276,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-6">
               <h3 className="text-sm font-extrabold text-[#304721] mb-2 flex items-center gap-2">
                 <Info className="h-4 w-4 text-[#3C9F47]" />
                 Storage &amp; Dynamic POS Guidelines
@@ -298,7 +291,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
           {/* Electronic Shelf Label (ESL) Simulation Box */}
           <div className="lg:col-span-5">
-            <div className="rounded-2xl border-2 border-[#304721] bg-white p-5 text-slate-900 shadow-md">
+            <div className="rounded-2xl border-2 border-[#304721] bg-white p-5 text-slate-900">
               <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
                 <span className="text-[10px] font-mono font-bold tracking-widest text-[#53863D]">
                   ELECTRONIC SHELF TAG #ESL-892

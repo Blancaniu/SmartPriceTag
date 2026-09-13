@@ -69,18 +69,7 @@ body {
 
 /* ── Critical pulse for expiring items ─────────────── */
 .critical-pulse {
-  animation: fadeSlideUp 0.4s ease-out both,
-    criticalGlowLight 2s ease-in-out infinite;
-}
-
-@keyframes criticalGlowLight {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-  }
-  50% {
-    box-shadow: 0 0 16px 2px rgba(220, 38, 38, 0.15);
-  }
+  animation: fadeSlideUp 0.4s ease-out both;
 }
 
 /* ── Custom Range Input Track Styling ──────────────── */

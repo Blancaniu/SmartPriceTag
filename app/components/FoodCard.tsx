@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Cormorant } from "next/font/google";
 import {
   Apple,
   Carrot,
@@ -14,6 +15,11 @@ import {
 } from "lucide-react";
 import { ProcessedFoodItem } from "@/app/lib/pricingEngine";
 import { FoodCategory } from "@/app/data/foodData";
+
+const cormorant = Cormorant({
+  weight: ["400", "600", "700"],
+  subsets: ["latin"],
+});
 
 interface FoodCardProps {
   item: ProcessedFoodItem;
@@ -84,7 +90,7 @@ export default function FoodCard({ item, index }: FoodCardProps) {
   return (
     <Link href={`/product/${item.id}`} className="block">
       <div
-        className={`food-card group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[#3C9F47] hover:shadow-lg hover:-translate-y-1 ${
+        className={`food-card group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 transition-all duration-300 hover:border-[#3C9F47] hover:-translate-y-1 ${
           isCritical ? "critical-pulse" : ""
         }`}
         style={{ animationDelay: `${index * 40}ms` }}
@@ -92,7 +98,7 @@ export default function FoodCard({ item, index }: FoodCardProps) {
         {/* Discount badge */}
         {item.discountPercentage > 0 && (
           <div
-            className={`absolute top-3 right-3 z-20 rounded-full border px-2.5 py-0.5 text-xs font-extrabold shadow-sm ${urgencyBg(
+            className={`absolute top-3 right-3 z-20 rounded-full border px-2.5 py-0.5 text-xs font-extrabold ${urgencyBg(
               item.urgencyLevel
             )} ${isCritical ? "animate-pulse" : ""}`}
           >
@@ -117,7 +123,7 @@ export default function FoodCard({ item, index }: FoodCardProps) {
             ) : null}
             
             {item.brand && (
-              <div className="absolute bottom-2 left-2 rounded-md bg-white/90 backdrop-blur-md px-2 py-0.5 text-[10px] font-semibold text-[#304721] border border-slate-200/80 shadow-xs">
+              <div className="absolute bottom-2 left-2 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-[#304721] border border-slate-200/80">
                 {item.brand}
               </div>
             )}
@@ -136,7 +142,7 @@ export default function FoodCard({ item, index }: FoodCardProps) {
                 </span>
               )}
             </div>
-            <h3 className="truncate text-base font-extrabold text-[#304721] group-hover:text-[#3C9F47] transition-colors">
+            <h3 className={`truncate text-2xl font-medium tracking-tight text-[#304721] group-hover:text-[#3C9F47] transition-colors ${cormorant.className}`}>
               {item.name}
             </h3>
           </div>
@@ -168,6 +174,7 @@ export default function FoodCard({ item, index }: FoodCardProps) {
                 item.urgencyLevel
               )}`}
             >
+              {item.freshnessLabel}
             </span>
             <span className="text-slate-500 font-medium">
               {item.daysUntilExpiry < 0
@@ -191,7 +198,8 @@ export default function FoodCard({ item, index }: FoodCardProps) {
               </span>
               <span className="ml-1 text-[11px] text-slate-500">/{item.unit}</span>
             </div>
-            <div className="flex items-center gap-1 text-xs font-semibold text-[#3C9F47] group-hover:translate-x-1 transition-transform">
+            <div className="flex items-center gap-1 text-xs font-bold text-[#3C9F47] group-hover:translate-x-1 transition-transform">
+              <span>Details</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </div>
           </div>
