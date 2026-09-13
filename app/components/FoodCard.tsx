@@ -99,11 +99,11 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
         {/* Discount badge */}
         {item.discountPercentage > 0 && (
           <div
-            className={`absolute top-3 right-3 z-20 rounded-full border px-2.5 py-0.5 text-xs font-extrabold ${urgencyBg(
-              item.urgencyLevel
-            )} ${isCritical ? "animate-pulse" : ""}`}
+            className={business
+              ? `absolute top-3 right-3 z-20 rounded-full border px-2.5 py-0.5 text-xs font-extrabold ${urgencyBg(item.urgencyLevel)} ${isCritical ? "animate-pulse" : ""}`
+              : "absolute top-3 right-3 z-20 rounded-xl border-2 border-red-600 bg-white px-3 py-1.5 text-lg font-black text-red-600 shadow-sm"}
           >
-            -{item.discountPercentage}%
+            -{item.discountPercentage}%{business ? "" : " OFF"}
           </div>
         )}
 
@@ -198,6 +198,13 @@ export default function FoodCard({ item, index, business = false }: FoodCardProp
                 ${item.discountedPrice.toFixed(2)}
               </span>
               <span className="ml-1 text-[11px] text-slate-500">/{item.unit}</span>
+              {!business && item.discountPercentage > 0 && (
+                <p className="mt-1 text-xs font-bold uppercase tracking-wide text-red-600">
+                  Save <span className={`text-lg font-semibold normal-case tracking-normal ${cormorant.className}`}>
+                    ${(item.originalPrice - item.discountedPrice).toFixed(2)}
+                  </span>
+                </p>
+              )}
             </div>
             <div className="flex items-center gap-1 text-xs font-bold text-[#3C9F47] group-hover:translate-x-1 transition-transform">
               <span>Details</span>

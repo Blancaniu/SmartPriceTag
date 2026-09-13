@@ -15,6 +15,7 @@ export type FilterMode = "below" | "above";
 export type SortOrder = "freshest" | "least-fresh";
 
 interface FreshnessSliderProps {
+  personal?: boolean;
   freshnessValue: number;
   onChangeFreshness: (val: number) => void;
   filterMode: FilterMode;
@@ -26,6 +27,7 @@ interface FreshnessSliderProps {
 }
 
 export default function FreshnessSlider({
+  personal = false,
   freshnessValue,
   onChangeFreshness,
   filterMode,
@@ -53,10 +55,10 @@ export default function FreshnessSlider({
           </div>
           <div>
             <h3 className="text-sm font-extrabold text-[#304721]">
-              Retail AI Freshness Filter &amp; Slider
+              {personal ? "Freshness filter" : "Retail AI Freshness Filter & Slider"}
             </h3>
             <p className="text-xs text-[#53863D]">
-              Filter inventory by freshness threshold to manage dynamic pricing &amp; waste
+              {personal ? "Find products that match your preferred freshness." : "Filter inventory by freshness threshold to manage dynamic pricing & waste"}
             </p>
           </div>
         </div>

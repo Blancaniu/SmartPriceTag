@@ -26,6 +26,8 @@ import {
 } from "@/app/lib/pricingEngine";
 import { CATEGORIES, FoodCategory } from "@/app/data/foodData";
 import { getCustomProducts, resolveCurrentSession, logoutUser, UserSession } from "@/app/lib/supabaseClient";
+import PriceRangeSlider from "./PriceRangeSlider";
+import { PriceRange } from "@/app/lib/pricePreferences";
 import { applyPricePreference } from "@/app/lib/pricePreferences";
 import StatsCard from "./StatsCard";
 import FoodCard from "./FoodCard";
@@ -47,6 +49,10 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
   const [freshnessValue, setFreshnessValue] = useState<number>(100);
   const [filterMode, setFilterMode] = useState<FilterMode>("below");
   const [sortOrder, setSortOrder] = useState<SortOrder>("freshest");
+
+  const [personalPriceRange, setPersonalPriceRange] = useState<PriceRange | null>(null);
+  const priceCeiling = Math.max(1, Math.ceil(Math.max(...items.map(item => item.discountedPrice), 0)));
+  const activePriceRange = personalPriceRange || { min: 0, max: priceCeiling };
 
   // Fetch OpenFoodFacts + Supabase user created products on mount
   useEffect(() => {
@@ -105,6 +111,10 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
       result = result.filter((i) => i.freshnessScore >= freshnessValue);
     }
 
+    if (!business && personalPriceRange) {
+      result = result.filter(item => item.discountedPrice >= personalPriceRange.min && item.discountedPrice <= personalPriceRange.max);
+    }
+
     result = [...result].sort((a, b) =>
       sortOrder === "freshest"
         ? b.freshnessScore - a.freshnessScore
@@ -112,7 +122,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
     );
 
     return result;
-  }, [items, selectedCategory, searchQuery, freshnessValue, filterMode, sortOrder]);
+  }, [items, selectedCategory, searchQuery, freshnessValue, filterMode, sortOrder, business, personalPriceRange]);
 
   // ── Stats Summary ────────────────────────────────────
   const stats = useMemo(() => {
@@ -209,8 +219,15 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           </div>
         </header>
 
+        {!business && (
+          <h2 className="mb-8 text-6xl font-black leading-[0.9] tracking-tight text-[#3C9F47] sm:text-7xl lg:text-8xl">
+            <span className="block">Welcome to</span>
+            <span className="block">SmartPriceTag</span>
+          </h2>
+        )}
+
         {/* ── Stats row ──────────────────────────────── */}
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className={`mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 ${business ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
           <StatsCard
             icon={Package}
             label="Total Products"
@@ -235,19 +252,20 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             iconColor="text-amber-600"
             delay={100}
           />
-          <StatsCard
+          {business && <StatsCard
             icon={PiggyBank}
             label="Total Waste Savings"
             value={`$${stats.totalSavings.toFixed(2)}`}
             accentBg="bg-[#6BB744]/20"
             iconColor="text-[#304721]"
             delay={150}
-          />
+          />}
         </div>
 
         {/* ── Interactive Freshness Slider ───────────── */}
         <div className="mb-6">
           <FreshnessSlider
+            personal={!business}
             freshnessValue={freshnessValue}
             onChangeFreshness={setFreshnessValue}
             filterMode={filterMode}
@@ -258,6 +276,13 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
             totalCount={items.length}
           />
         </div>
+
+        {!business && (
+          <section className="mb-6 rounded-2xl border border-slate-200/90 bg-white p-5">
+            <h2 className="mb-4 text-sm font-extrabold text-[#304721]">Price range preference</h2>
+            <PriceRangeSlider value={activePriceRange} ceiling={Math.max(priceCeiling, activePriceRange.max)} onChange={setPersonalPriceRange} />
+          </section>
+        )}
 
         {/* ── Category Pills & Search Bar ────────────── */}
         <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-200/90 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -312,7 +337,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           </p>
 
           <span className="text-xs font-semibold text-[#53863D] hidden sm:block">
-            💡 Click any product to view detailed info &amp; future price simulator
+            {business ? "💡 Click any product to view detailed info & future price simulator" : "Click any product for ingredients and buying advice"}
           </span>
         </div>
 
@@ -330,7 +355,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
               No products match current slider filter
             </p>
             <p className="text-xs text-slate-500 mb-4">
-              Try adjusting the freshness slider range or clearing search criteria
+              Try adjusting your filters or clearing search criteria
             </p>
             <button
               onClick={() => {
@@ -338,6 +363,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
                 setFilterMode("below");
                 setSelectedCategory("All");
                 setSearchQuery("");
+                setPersonalPriceRange(null);
               }}
               className="rounded-xl border border-[#304721] bg-[#304721] px-4 py-2 text-xs font-bold text-white hover:bg-[#3C9F47] transition-all"
             >

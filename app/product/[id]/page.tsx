@@ -1,3 +1,4 @@
+import PersonalProductInfo from "@/app/components/PersonalProductInfo";
 import BusinessGate from "@/app/components/BusinessGate";
 import { notFound } from "next/navigation";
 import { getAllFoodItems } from "@/app/lib/openFoodFacts";
@@ -21,6 +22,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     notFound();
   }
 
-  const detail = <ProductDetailClient product={product} business={business} />;
-  return business ? <BusinessGate>{detail}</BusinessGate> : detail;
+  return business
+    ? <BusinessGate><ProductDetailClient product={product} business /></BusinessGate>
+    : <PersonalProductInfo product={product} />;
 }
