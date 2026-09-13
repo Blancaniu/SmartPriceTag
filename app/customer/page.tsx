@@ -1,5 +1,7 @@
 "use client";
 
+import AiResponse from "@/app/components/AiResponse";
+
 import { useCallback, useEffect, useState } from "react";
 import { StateBadge } from "@/components/StateBadge";
 import type { Product } from "@/types";
@@ -83,7 +85,7 @@ export default function CustomerDisplay() {
         ))}
       </section>
 
-      {selected && <div className="modal-backdrop" onClick={() => setSelected(null)}><section className="advice-modal" onClick={(event) => event.stopPropagation()}><button className="modal-close" onClick={() => setSelected(null)}>×</button><div className="ai-mark">AI</div><span className="section-kicker">GROQ STORAGE GUIDE</span><h2>{selected.name}</h2>{loading ? <p className="loading-line">Preparing guidance…</p> : <div className="advice-text">{advice}</div>}<p className="fine-print">Always follow the package label and local food-safety guidance. Sensor readings and AI advice are not a safety guarantee.</p></section></div>}
+      {selected && <div className="modal-backdrop" onClick={() => setSelected(null)}><section className="advice-modal" onClick={(event) => event.stopPropagation()}><button className="modal-close" onClick={() => setSelected(null)}>×</button><div className="ai-mark">AI</div><span className="section-kicker">GROQ STORAGE GUIDE</span><h2>{selected.name}</h2>{loading ? <p className="loading-line">Preparing guidance…</p> : <AiResponse text={advice} />}<p className="fine-print">Always follow the package label and local food-safety guidance. Sensor readings and AI advice are not a safety guarantee.</p></section></div>}
     </main>
   );
 }

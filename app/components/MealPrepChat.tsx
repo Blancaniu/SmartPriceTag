@@ -1,5 +1,7 @@
 "use client";
 
+import AiResponse from "@/app/components/AiResponse";
+
 import { useEffect, useId, useRef, useState } from "react";
 import { ChefHat, Send, Sparkles, RotateCcw, LoaderCircle } from "lucide-react";
 import PriceRangeSlider from "./PriceRangeSlider";
@@ -94,7 +96,7 @@ export default function MealPrepChat({ products, selectedIds, onToggleProduct, o
       <div className="meal-prep-layout">
         <form className="meal-prep-ingredients" onSubmit={event => {
           event.preventDefault();
-          void send({ ingredients: ingredients.trim(), preferences: preferences.trim(), servings, days }, [], "Create a practical meal-prep plan using these selected store products and my preferences. These are products I may buy, not ingredients I already own. Suggest quantities to buy and clearly identify anything extra needed." + (includeRecipes ? " Include a recipe for each meal with ingredient quantities for the planned servings, numbered cooking steps, preparation and cooking times, and batch-prep tips. Respect my dietary preferences." : ""));
+          void send({ ingredients: ingredients.trim(), preferences: preferences.trim(), servings, days }, [], "Create a practical meal-prep plan using these selected store products and my preferences. These are products I may buy, not ingredients I already own. Use only my selected products, plus water, salt, pepper, and basic cooking oil assumed available at home. Do not add other ingredients or suggest extra groceries. Suggest quantities for the selected products." + (includeRecipes ? " Include a recipe for each meal with ingredient quantities for the planned servings, numbered cooking steps, preparation and cooking times, and batch-prep tips. Respect my dietary preferences." : ""));
         }}>
           <fieldset className="meal-prep-product-picker" disabled={pending}>
             <legend>Choose listed products ({selected.length}/8)</legend>
@@ -113,7 +115,7 @@ export default function MealPrepChat({ products, selectedIds, onToggleProduct, o
             {matchingProducts.length === 0 && <p className="meal-prep-hint">No products match. Widen the price range, lower minimum freshness, or reset the filters.</p>}
           </fieldset>
           {outsideFilters && <p className="meal-prep-hint" role="status">Some products selected from the store are outside these filters. Reset the filters or <button type="button" disabled={pending} onClick={() => updateFilters(activePriceRange, minimumFreshness)}>remove those products</button> before generating a plan.</p>}
-          {selected.length > 0 && <div className="meal-prep-cost-summary"><span>Selected products <strong>${(totalCents / 100).toFixed(2)}</strong></span><span>You save <strong>${(Math.max(0, originalCents - totalCents) / 100).toFixed(2)}</strong></span><small>AUD, one listed unit of each selected product. Your meal plan may need different quantities or extras.</small></div>}
+          {selected.length > 0 && <div className="meal-prep-cost-summary"><span>Selected products <strong>${(totalCents / 100).toFixed(2)}</strong></span><span>You save <strong>${(Math.max(0, originalCents - totalCents) / 100).toFixed(2)}</strong></span><small>AUD, one listed unit of each selected product. Your meal plan may need different quantities. Basic pantry staples are assumed available and excluded from this total.</small></div>}
           <div className="meal-prep-quick-actions meal-prep-recipe-option">
             <button type="button" disabled={pending} aria-pressed={includeRecipes} onClick={() => setIncludeRecipes(value => !value)}><ChefHat size={16} />Include recipes<span>{includeRecipes ? "On" : "Off"}</span></button>
             <p className="meal-prep-hint">Add quantities and step-by-step cooking instructions when you generate your plan.</p>
@@ -129,9 +131,9 @@ export default function MealPrepChat({ products, selectedIds, onToggleProduct, o
         <div className="meal-prep-conversation">
           <div className="meal-prep-chat-header"><span><ChefHat size={18} />Meal-prep assistant</span><button type="button" disabled={pending || messages.length === 0} onClick={() => { setMessages([]); setContext(null); setQuestion(""); setError(""); }} aria-label="Clear meal-prep conversation" title="Clear conversation"><RotateCcw size={16} /></button></div>
           <div className="meal-prep-transcript" ref={transcript} role="log" aria-label="Meal-prep conversation" aria-live="polite" aria-relevant="additions text" aria-busy={pending}>
-            {messages.length === 0 && <div className="meal-prep-welcome"><span><ChefHat size={32} /></span><h3>Let’s cook something good.</h3><p>Choose from the listed products and I can suggest meals, quantities to buy, and a batch-cooking plan.</p><div className="meal-prep-example"><strong>{selected.length ? `${selected.length} products selected. Ready to plan!` : "Select products to get started."}</strong></div></div>}
+            {messages.length === 0 && <div className="meal-prep-welcome"><span><ChefHat size={32} /></span><h3>Let’s cook something good.</h3><p>Choose your products and I will make a plan using only those ingredients, plus basics like salt, pepper, oil, and water.</p><div className="meal-prep-example"><strong>{selected.length ? `${selected.length} products selected. Ready to plan!` : "Select products to get started."}</strong></div></div>}
             {context && <p className="meal-prep-context">Planning for {context.servings} {context.servings === 1 ? "person" : "people"} over {context.days} {context.days === 1 ? "day" : "days"}<span className="meal-prep-plan-products">Using: {context.ingredients.split("\n").map(line => line.split(" (")[0]).join(", ")}</span></p>}
-            {messages.map((message, index) => <div key={index} className={`meal-prep-message ${message.role}`}><span>{message.role === "user" ? "You" : "Meal-prep assistant"}</span><p>{message.content}</p></div>)}
+            {messages.map((message, index) => index === 0 && message.role === "user" ? null : <div key={index} className={`meal-prep-message ${message.role}`}><span>{message.role === "user" ? "You" : "Meal-prep assistant"}</span>{message.role === "assistant" ? <AiResponse text={message.content} /> : <p>{message.content}</p>}</div>)}
             {pending && <p className="meal-prep-thinking"><LoaderCircle className="animate-spin" size={16} />Putting your meal ideas together…</p>}
           </div>
           {error && <p className="meal-prep-error" role="alert">{error} Your inputs are saved here; submit again to retry.</p>}

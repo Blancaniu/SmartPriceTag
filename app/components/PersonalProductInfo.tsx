@@ -1,5 +1,7 @@
 "use client";
 
+import AiResponse from "@/app/components/AiResponse";
+
 import { useState, useSyncExternalStore } from "react";
 import { Cormorant } from "next/font/google";
 import Link from "next/link";
@@ -104,7 +106,7 @@ export default function PersonalProductInfo({ product: initialProduct }: { produ
           </ul>
           <button type="button" onClick={requestAdvice} disabled={loadingAdvice} aria-controls="further-advice" className="mt-5 rounded-xl bg-[#203B2A] px-4 py-2 text-sm font-bold text-white hover:bg-[#2D7545] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#203B2A] disabled:cursor-wait disabled:opacity-60">{loadingAdvice ? "Getting advice…" : advice ? "Refresh advice" : "Further advice"}</button>
           <div id="further-advice" aria-live="polite" aria-busy={loadingAdvice}>
-            {advice && <div className="mt-4 rounded-xl border border-[#536B50]/20 bg-[#FAF9F5] p-4"><h3 className="mb-2 text-sm font-bold">Advice for {product.name}</h3>{adviceNotice && <p className="mb-2 text-xs text-amber-800">{adviceNotice}</p>}<p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">{advice}</p></div>}
+            {advice && <div className="mt-4 rounded-xl border border-[#536B50]/20 bg-[#FAF9F5] p-4"><h3 className="mb-2 text-sm font-bold">Advice for {product.name}</h3>{adviceNotice && <p className="mb-2 text-xs text-amber-800">{adviceNotice}</p>}<AiResponse text={advice} /></div>}
           </div>
           {adviceError && <p role="alert" className="mt-3 text-sm text-red-600">{adviceError}</p>}
         </section>

@@ -416,3 +416,37 @@ input[type="range"] {
 .meal-prep-freshness-slider { width: 100%; accent-color: #2d7545; margin: 12px 0; }
 .meal-prep-filter-summary { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 11px; color: #637456; }
 .meal-prep-filter-summary button, .meal-prep-hint button { text-decoration: underline; text-underline-offset: 3px; font-weight: 650; }
+/* Readable, safely rendered AI advice and recipes. */
+.ai-response { color: #4d5d4d; font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+.ai-response > * + * { margin-top: 16px; }
+.ai-response h4 { font-size: 15px; line-height: 1.5; font-weight: 750; color: #203b2a; padding-bottom: 8px; border-bottom: 1px solid #dfe6d7; }
+.ai-response strong { color: #203b2a; font-weight: 700; }
+.ai-response em { color: #68765f; font-size: .94em; }
+.ai-response ul, .ai-response ol { display: grid; gap: 12px; padding-left: 23px; }
+.ai-response ul { list-style: disc; }
+.ai-response ol { list-style: decimal; }
+.ai-response li { padding-left: 5px; }
+.ai-response li::marker { color: #5d853a; font-weight: 700; }
+.ai-response li > strong:first-child { display: block; margin-bottom: 3px; }
+.ai-response p { margin-bottom: 0; }
+.ai-response > p:has(> em:only-child) { padding: 12px 14px; border-left: 3px solid #c2d3ad; background: #f0f4e9; border-radius: 0 8px 8px 0; }
+.ai-response code { background: #eaf0e2; border-radius: 4px; padding: 2px 5px; font-size: .9em; }
+.ai-response pre { overflow-x: auto; padding: 14px; border-radius: 9px; background: #eaf0e2; }
+.ai-response pre code { padding: 0; }
+.meal-prep-message .ai-response p { white-space: normal; font-size: inherit; line-height: inherit; }
+.meal-prep-message .ai-response { font-size: 13px; }
+/* Structured meal plans, including tables returned by the assistant. */
+.meal-prep-message.assistant { max-width: 100%; background: white; border-color: #e0e7d8; padding: 20px; box-shadow: 0 2px 8px #203b2a05; }
+.meal-prep-message.assistant > span { display: inline-block; background: #edf4e5; padding: 4px 9px; border-radius: 6px; margin-bottom: 14px; letter-spacing: .02em; }
+.ai-response > h4:not(:first-child) { margin-top: 26px; }
+.ai-response hr { border: 0; border-top: 1px solid #e3e8dc; margin: 22px 0; }
+.ai-response-table { width: 100%; max-width: 100%; overflow-x: auto; border: 1px solid #dfe6d7; border-radius: 10px; background: white; }
+.ai-response-table:focus-visible { outline: 2px solid #5d853a; outline-offset: 3px; }
+.ai-response-table table { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.65; text-align: left; }
+.ai-response-table th { background: #edf3e6; color: #36502b; font-weight: 700; font-size: 11px; text-transform: none; letter-spacing: .01em; padding: 12px 14px; border-bottom: 1px solid #dfe6d7; white-space: nowrap; }
+.ai-response-table td { padding: 12px 14px; border-bottom: 1px solid #edf0e8; vertical-align: top; min-width: 100px; color: #4d5d4d; }
+.ai-response-table td:first-child { font-weight: 600; color: #294329; }
+.ai-response-table tr:nth-child(even) td { background: #f8faf5; }
+.ai-response-table tr:last-child td { border-bottom: 0; }
+.ai-response-table td strong { color: #203b2a; }
+@media(max-width: 760px) { .meal-prep-message.assistant { padding: 15px; } .ai-response-table th, .ai-response-table td { padding: 10px 12px; } }
