@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { StateBadge } from "@/components/StateBadge";
 import type { Product } from "@/types";
+import MealPrepChat from "@/app/components/MealPrepChat";
 
 type AdviceResponse = {
   advice?: string;
@@ -10,6 +11,10 @@ type AdviceResponse = {
 };
 
 export default function CustomerDisplay() {
+  const [mealProductIds, setMealProductIds] = useState<string[]>([]);
+  function toggleMealProduct(id: string) {
+    setMealProductIds(current => current.includes(id) ? current.filter(value => value !== id) : current.length < 8 ? [...current, id] : current);
+  }
   const [products, setProducts] = useState<Product[]>([]);
   const [selected, setSelected] = useState<Product | null>(null);
   const [advice, setAdvice] = useState("");
@@ -61,6 +66,7 @@ export default function CustomerDisplay() {
   return (
     <main className="customer-page">
       <div className="customer-heading"><div><div className="eyebrow">TODAY&apos;S SMART SAVINGS</div><h1>Good food. Better timing.</h1><p>Prices respond to remaining shelf life and verified storage readings.</p></div><div className="waste-badge"><strong>{products.filter((p) => p.discountPercent > 0).length}</strong><span>rescue deals</span></div></div>
+      <MealPrepChat products={products.map(product => ({ ...product, discountPercentage: product.discountPercent }))} selectedIds={mealProductIds} onToggleProduct={toggleMealProduct} onSelectProducts={setMealProductIds} />
       <section className="customer-grid">
         {products.map((product) => (
           <article className="price-card" key={product.id}>
@@ -71,6 +77,7 @@ export default function CustomerDisplay() {
             <div className="freshness-meter"><div style={{ width: `${product.freshnessScore}%` }} /></div>
             <div className="card-facts"><span>Freshness <b>{product.freshnessScore}/100</b></span><span>Use by <b>{product.expiryDate}</b></span>{product.sensor && <span>Storage <b>{product.sensor.temperatureC.toFixed(1)}°C</b></span>}</div>
             {product.allergens.length > 0 && <p className="allergen"><b>Contains:</b> {product.allergens.join(", ")}</p>}
+            <button type="button" className="meal-prep-card-select" aria-pressed={mealProductIds.includes(product.id)} disabled={!mealProductIds.includes(product.id) && mealProductIds.length >= 8} onClick={() => toggleMealProduct(product.id)}>{mealProductIds.includes(product.id) ? "Added to meal plan" : "+ Add to meal plan"}</button>
             <button className="button primary full" onClick={() => ask(product)}>How should I store this?</button>
           </article>
         ))}

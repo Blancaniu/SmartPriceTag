@@ -29,6 +29,8 @@ GROQ_MODEL=openai/gpt-oss-20b
 
 The personal product page's **Further advice** button calls `/api/advice`. The server loads the product and sends its type, calculated freshness score, expiry information and ingredients to Groq. The key stays on the server. Without a key, or if Groq fails, the page labels the result as standard guidance. Expired products receive a fixed caution instead of generated advice.
 
+The customer dashboard and customer display also include **AI meal prep**. Select up to eight listed products using Add to meal plan on the product cards or the picker in the chatbox. Choose people, days, and dietary preferences to create a plan, then ask follow-up questions. The AI receives the selected product names, categories, listing units, and expiry dates, and suggests quantities to buy. `/api/meal-prep` uses the same server-side `GROQ_API_KEY` and optional `GROQ_MODEL`. Ingredients, preferences, and recent conversation turns are sent to Groq; the chat is held in page memory and clears on reload. If AI is unavailable, the chat displays an error and keeps the inputs for retry instead of showing a fabricated plan.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

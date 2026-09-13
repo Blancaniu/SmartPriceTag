@@ -30,10 +30,15 @@ import StatsCard from "./StatsCard";
 import FoodCard from "./FoodCard";
 import WeatherPricing from "./WeatherPricing";
 import BusinessInventory from "./BusinessInventory";
+import MealPrepChat from "./MealPrepChat";
 import FreshnessSlider, { FilterMode, SortOrder } from "./FreshnessSlider";
 
 export default function Dashboard({ business = false }: { business?: boolean }) {
   const router = useRouter();
+  const [mealProductIds, setMealProductIds] = useState<string[]>([]);
+  function toggleMealProduct(id: string) {
+    setMealProductIds(current => current.includes(id) ? current.filter(value => value !== id) : current.length < 8 ? [...current, id] : current);
+  }
   const [items, setItems] = useState<ProcessedFoodItem[]>(() =>
     getProcessedFoodItems()
   );
@@ -223,7 +228,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           </>
         ) : (
           <>
-            <nav className="fm-nav" aria-label="Store navigation"><a href="#categories">Shop by category</a><a href="#products">All products</a><a href="#filters">My budget &amp; freshness</a></nav>
+            <nav className="fm-nav" aria-label="Store navigation"><a href="#categories">Shop by category</a><a href="#products">All products</a><a href="#filters">My budget &amp; freshness</a><a href="#meal-prep">AI meal prep</a></nav>
         <section className="fm-banners" aria-label="Explore our groceries">
           <div className="fm-main-banner"><div><p className="fm-eyebrow">Fresh choices, every day</p><h2>Good food.<br />Even better value.</h2><p>Discover fresh favourites and thoughtful prices that help good food go further.</p><a href="#products" className="fm-cta">Explore products &rarr;</a></div><img src="/foodmart/product-thumb-1.png" alt="Fruit juice bottle" /></div>
           <a href="#products" onClick={() => setSelectedCategory("Fruits")} className="fm-promo fm-produce"><span>Fresh from the produce aisle</span><h3>Fruits &amp;<br />Vegetables</h3><span>Explore fruits &rarr;</span></a>
@@ -233,6 +238,7 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
           </>
         )}
         {business && <section id="weather" className="fm-weather"><div className="fm-section-title"><h2>Weather &amp; pricing conditions</h2></div><WeatherPricing weather={items[0]?.weather} editable /></section>}
+        {!business && <MealPrepChat products={items.filter(item => item.daysUntilExpiry >= 0).map(item => ({ ...item, currentPrice: item.discountedPrice }))} selectedIds={mealProductIds} onToggleProduct={toggleMealProduct} onSelectProducts={setMealProductIds} />}
         <div id="products" className="fm-section-title"><h2>{business ? "Your inventory" : "Fresh finds for you"}</h2><span>{isLoadingApi ? "Updating products..." : todayStr}</span></div>
         {/* ── Stats row ──────────────────────────────── */}
         <div className={`mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 ${business ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
@@ -350,10 +356,14 @@ export default function Dashboard({ business = false }: { business?: boolean }) 
         </div>
 
         {/* ── Food Card Grid ─────────────────────────── */}
+        {!business && mealProductIds.length > 0 && <div className="meal-prep-selection-summary"><span>{items.filter(item => item.daysUntilExpiry >= 0 && mealProductIds.includes(item.id)).length} products selected for meal prep</span><a href="#meal-prep">Plan meals with these items &rarr;</a></div>}
         {filteredItems.length > 0 ? (
           business ? <BusinessInventory items={filteredItems} /> : <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.map((item, i) => (
-              <FoodCard key={item.id} item={item} index={i} business={business} />
+              <div key={item.id}>
+                <FoodCard item={item} index={i} business={business} />
+                {!business && <button type="button" className="meal-prep-card-select" aria-pressed={mealProductIds.includes(item.id)} disabled={!mealProductIds.includes(item.id) && mealProductIds.length >= 8} onClick={() => toggleMealProduct(item.id)}>{mealProductIds.includes(item.id) ? "Added to meal plan" : "+ Add to meal plan"}</button>}
+              </div>
             ))}
           </div>
         ) : (
