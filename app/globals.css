@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafdfa;
+  --foreground: #1c2617;
+  
+  /* Palette definitions */
+  --color-brand-primary: #3c9f47;   /* Leaf Green */
+  --color-brand-bright: #6bb744;    /* Meadow Green */
+  --color-brand-dark: #304721;      /* Deep Forest Green */
+  --color-brand-sage: #53863d;      /* Medium Sage Green */
 }
 
 @theme inline {
@@ -12,15 +18,96 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Card entrance animations ──────────────────────── */
+.stats-card {
+  animation: slideUp 0.4s ease-out both;
+}
+
+.food-card {
+  animation: fadeSlideUp 0.4s ease-out both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Freshness bar fill animation ──────────────────── */
+.freshness-bar {
+  animation: growWidth 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes growWidth {
+  from {
+    width: 0% !important;
+  }
+}
+
+/* ── Critical pulse for expiring items ─────────────── */
+.critical-pulse {
+  animation: fadeSlideUp 0.4s ease-out both,
+    criticalGlowLight 2s ease-in-out infinite;
+}
+
+@keyframes criticalGlowLight {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+  50% {
+    box-shadow: 0 0 16px 2px rgba(220, 38, 38, 0.15);
+  }
+}
+
+/* ── Custom Range Input Track Styling ──────────────── */
+input[type="range"] {
+  accent-color: #3c9f47;
+}
+
+/* ── Smooth Scrollbar ──────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c2d6be;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #53863d;
+}
+
+/* ── Selection styling ─────────────────────────────── */
+::selection {
+  background: rgba(60, 159, 71, 0.2);
+  color: #304721;
 }

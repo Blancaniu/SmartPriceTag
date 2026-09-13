@@ -1,0 +1,202 @@
+"use client";
+
+import Link from "next/link";
+import {
+  Apple,
+  Carrot,
+  Milk,
+  Beef,
+  Croissant,
+  Fish,
+  UtensilsCrossed,
+  ArrowRight,
+  ShieldCheck,
+} from "lucide-react";
+import { ProcessedFoodItem } from "@/app/lib/pricingEngine";
+import { FoodCategory } from "@/app/data/foodData";
+
+interface FoodCardProps {
+  item: ProcessedFoodItem;
+  index: number;
+}
+
+function CategoryIcon({ category }: { category: FoodCategory }) {
+  const className = "h-10 w-10 text-[#53863D]";
+  switch (category) {
+    case "Fruits":
+      return <Apple className={className} />;
+    case "Vegetables":
+      return <Carrot className={className} />;
+    case "Dairy":
+      return <Milk className={className} />;
+    case "Meat":
+      return <Beef className={className} />;
+    case "Bakery":
+      return <Croissant className={className} />;
+    case "Seafood":
+      return <Fish className={className} />;
+    default:
+      return <UtensilsCrossed className={className} />;
+  }
+}
+
+function urgencyColor(level: string): string {
+  switch (level) {
+    case "low":
+      return "text-[#3C9F47]";
+    case "medium":
+      return "text-amber-600";
+    case "high":
+      return "text-orange-600";
+    case "critical":
+      return "text-red-600";
+    default:
+      return "text-slate-600";
+  }
+}
+
+function urgencyBg(level: string): string {
+  switch (level) {
+    case "low":
+      return "bg-[#3C9F47]/10 text-[#304721] border-[#3C9F47]/30";
+    case "medium":
+      return "bg-amber-500/10 text-amber-800 border-amber-500/30";
+    case "high":
+      return "bg-orange-500/10 text-orange-800 border-orange-500/30";
+    case "critical":
+      return "bg-red-500/10 text-red-700 border-red-500/30";
+    default:
+      return "bg-slate-100 text-slate-700 border-slate-300";
+  }
+}
+
+function freshnessBarColor(score: number): string {
+  if (score >= 80) return "bg-[#3C9F47]";
+  if (score >= 60) return "bg-[#6BB744]";
+  if (score >= 40) return "bg-amber-400";
+  if (score >= 20) return "bg-orange-500";
+  return "bg-red-500";
+}
+
+export default function FoodCard({ item, index }: FoodCardProps) {
+  const isCritical = item.urgencyLevel === "critical";
+
+  return (
+    <Link href={`/product/${item.id}`} className="block">
+      <div
+        className={`food-card group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[#3C9F47] hover:shadow-lg hover:-translate-y-1 ${
+          isCritical ? "critical-pulse" : ""
+        }`}
+        style={{ animationDelay: `${index * 40}ms` }}
+      >
+        {/* Discount badge */}
+        {item.discountPercentage > 0 && (
+          <div
+            className={`absolute top-3 right-3 z-20 rounded-full border px-2.5 py-0.5 text-xs font-extrabold shadow-sm ${urgencyBg(
+              item.urgencyLevel
+            )} ${isCritical ? "animate-pulse" : ""}`}
+          >
+            -{item.discountPercentage}%
+          </div>
+        )}
+
+        <div>
+          {/* Media preview */}
+          <div className="relative mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-2 group-hover:border-[#3C9F47]/20 transition-colors">
+            {item.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={item.imageUrl}
+                alt={item.name}
+                className="h-full w-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
+            ) : null}
+            
+            {item.brand && (
+              <div className="absolute bottom-2 left-2 rounded-md bg-white/90 backdrop-blur-md px-2 py-0.5 text-[10px] font-semibold text-[#304721] border border-slate-200/80 shadow-xs">
+                {item.brand}
+              </div>
+            )}
+          </div>
+
+          {/* Title & category */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <span className="inline-block rounded-full bg-[#FAFDF9] border border-[#53863D]/30 px-2 py-0.5 text-[10px] font-bold text-[#304721]">
+                {item.category}
+              </span>
+              {item.nutriscore && (
+                <span className="flex items-center gap-1 rounded bg-[#3C9F47]/10 text-[#304721] px-1.5 py-0.5 text-[10px] font-bold border border-[#3C9F47]/30">
+                  <ShieldCheck className="h-3 w-3 text-[#3C9F47]" />
+                  Nutri-Score {item.nutriscore}
+                </span>
+              )}
+            </div>
+            <h3 className="truncate text-base font-extrabold text-[#304721] group-hover:text-[#3C9F47] transition-colors">
+              {item.name}
+            </h3>
+          </div>
+        </div>
+
+        <div>
+          {/* Freshness Bar */}
+          <div className="mb-3">
+            <div className="mb-1 flex items-center justify-between text-xs">
+              <span className="text-[#53863D] font-medium">Freshness Score</span>
+              <span className={`font-bold ${urgencyColor(item.urgencyLevel)}`}>
+                {item.freshnessScore}%
+              </span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200/60">
+              <div
+                className={`freshness-bar h-full rounded-full transition-all duration-700 ${freshnessBarColor(
+                  item.freshnessScore
+                )}`}
+                style={{ width: `${Math.max(item.freshnessScore, 4)}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Freshness Label & Days Remaining */}
+          <div className="mb-4 flex items-center justify-between text-xs">
+            <span
+              className={`rounded-full border px-2 py-0.5 font-bold ${urgencyBg(
+                item.urgencyLevel
+              )}`}
+            >
+            </span>
+            <span className="text-slate-500 font-medium">
+              {item.daysUntilExpiry < 0
+                ? `Expired ${Math.abs(item.daysUntilExpiry)}d ago`
+                : item.daysUntilExpiry === 0
+                ? "Expires today"
+                : `${item.daysUntilExpiry}d remaining`}
+            </span>
+          </div>
+
+          {/* Pricing & Footer Link */}
+          <div className="flex items-end justify-between border-t border-slate-100 pt-3">
+            <div>
+              {item.discountPercentage > 0 && (
+                <span className="mr-2 text-xs text-slate-400 line-through">
+                  ${item.originalPrice.toFixed(2)}
+                </span>
+              )}
+              <span className="text-xl font-black font-medium text-[#304721]">
+                ${item.discountedPrice.toFixed(2)}
+              </span>
+              <span className="ml-1 text-[11px] text-slate-500">/{item.unit}</span>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-semibold text-[#3C9F47] group-hover:translate-x-1 transition-transform">
+              <ArrowRight className="h-3.5 w-3.5" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
